@@ -110,3 +110,8 @@ venv.bak/
 # pretrained stuff
 /model_dir/
 /d2_detection_data
+
+# Downloaded pretrained models, 2D detections and eval outputs (large, fetched from the CLOCs Google Drive)
+model_dir/
+CLOCs_SecCas_pretrained/
+d2_detection_data/

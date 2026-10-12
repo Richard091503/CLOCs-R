@@ -377,6 +377,7 @@ def train(config_path,
     logf.close()
 
 
+@torch.no_grad()
 def _predict_kitti_to_file(net,
                            detection_2d_path,
                            fusion_layer,
@@ -446,6 +447,7 @@ def _predict_kitti_to_file(net,
             f.write(result_str)
 
 
+@torch.no_grad()
 def predict_kitti_to_anno(net,
                           detection_2d_path,
                           fusion_layer,
@@ -868,7 +870,7 @@ def predict_v2(net,example, preds_dict):
             if net._use_direction_classifier:
                 dir_labels = selected_dir_labels
                 #print("dir_labels shape is:",dir_labels.shape,"the values are: ",dir_labels)
-                opp_labels = (box_preds[..., -1] > 0) ^ dir_labels.byte()
+                opp_labels = (box_preds[..., -1] > 0) ^ dir_labels.to(torch.bool)
                 box_preds[..., -1] += torch.where(
                     opp_labels,
                     torch.tensor(np.pi).type_as(box_preds),

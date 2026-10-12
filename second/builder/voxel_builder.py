@@ -1,7 +1,15 @@
 import numpy as np
 
-from spconv.utils import VoxelGenerator
+from spconv.utils import VoxelGeneratorV2
 from second.protos import voxel_generator_pb2
+
+
+class VoxelGenerator(VoxelGeneratorV2):
+    """spconv 1.2 compatibility: VoxelGeneratorV2 (no full_mean, no block
+    filtering, same as spconv v1.0) returning the v1.0 3-tuple."""
+    def generate(self, points, max_voxels=None):
+        res = super().generate(points, max_voxels)
+        return res["voxels"], res["coordinates"], res["num_points_per_voxel"]
 
 
 def build(voxel_config):
