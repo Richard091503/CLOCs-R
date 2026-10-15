@@ -1,0 +1,18 @@
+KITTI val frame 000039 - CLOCs short run, step 7424
+Ground-truth cars: 6   Predictions with score >= 0.5: 4
+
+Predictions (camera coords: x right, y down, z forward; metres)
+ score       x      y       z     l     h     w    yaw
+ 0.849   -2.63   1.71    7.16  4.54  1.59  1.74   1.60
+ 0.840    2.67   1.69   16.63  3.80  1.45  1.61   4.71
+ 0.804   -2.59   1.73   33.93  4.53  1.50  1.72   1.60
+ 0.794    2.53   1.75   29.46  3.81  1.47  1.58   1.55
+
+Ground truth cars
+      x      y       z     l     h     w    yaw  difficulty
+  -2.70   1.73    7.17  4.30  1.48  1.67   1.55  moderate
+   2.61   1.74   16.67  3.62  1.46  1.54  -1.57  easy
+  -2.60   1.77   33.82  4.42  1.52  1.57   1.57  moderate
+   2.68   1.82   29.48  3.92  1.51  1.58   1.55  moderate
+  -2.47   1.85   48.95  3.33  1.46  1.60   1.53  ignored
+   2.93   1.82   49.29  3.54  1.64  1.70  -1.56  hard

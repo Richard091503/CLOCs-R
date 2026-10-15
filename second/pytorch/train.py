@@ -237,7 +237,8 @@ def train(config_path,
                     example = next(data_iter)
                 example_torch = example_convert_to_torch(example, float_dtype)
                 batch_size = example["anchors"].shape[0]
-                all_3d_output_camera_dict, all_3d_output, top_predictions, fusion_input,tensor_index = net(example_torch,detection_2d_path)
+                with torch.no_grad():  # SECOND is frozen; only the fusion layer is trained
+                    all_3d_output_camera_dict, all_3d_output, top_predictions, fusion_input,tensor_index = net(example_torch,detection_2d_path)
                 d3_gt_boxes = example_torch["d3_gt_boxes"][0,:,:]
                 if d3_gt_boxes.shape[0] == 0:
                     target_for_fusion = np.zeros((1,70400,1))

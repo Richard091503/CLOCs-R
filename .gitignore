@@ -115,3 +115,6 @@ venv.bak/
 model_dir/
 CLOCs_SecCas_pretrained/
 d2_detection_data/
+
+# Local training runs (checkpoints, per-eval detections); results/ holds the documented copies
+training_runs/
