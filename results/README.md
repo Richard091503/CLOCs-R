@@ -24,7 +24,7 @@ Car, IoU 0.7, KITTI 40-recall-point AP, on the 3,769-frame validation split.
 | Software | Python 3.8, PyTorch 1.10.2 + CUDA 11.3, spconv 1.2.1 (see [`env.sh`](../env.sh)) |
 | 3D detector | SECOND, authors' pretrained weights (`model_dir/voxelnet-30950.tckpt`), **frozen** |
 | 2D detector | Cascade-RCNN detections provided by the CLOCs authors (`d2_detection_data/`) |
-| Trained | CLOCs fusion layer only (17,747 parameters), trained from scratch |
+| Trained | CLOCs fusion layer only (2,143 parameters in use), trained from scratch |
 | Data | KITTI object detection: 3,712 train / 3,769 val frames (standard split) |
 | Config | [`second/configs/car.fhd.short.config`](../second/configs/car.fhd.short.config): same as `car.fhd.config` except `steps: 7424` (2 epochs, versus 37,120 = 10 epochs in the original) |
 | Optimizer | Adam, one-cycle LR schedule (max 3e-3), weight decay 0.01, batch size 1, seed 3 |

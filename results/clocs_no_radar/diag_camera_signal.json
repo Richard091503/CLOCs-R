@@ -1,0 +1,78 @@
+{
+ "holdout": {
+  "0-30": {
+   "boxes": 4880,
+   "real_cars": 1373,
+   "auc_second": 0.9872812900886397,
+   "auc_2d_any_overlap": 0.8486218697762108,
+   "auc_2d_aligned": 0.9438174945499699,
+   "auc_clocs": 0.9859996996953965,
+   "real_with_aligned_2d_above_0p5": 0.8907501820830298
+  },
+  "30-50": {
+   "boxes": 11587,
+   "real_cars": 1438,
+   "auc_second": 0.9617243749632561,
+   "auc_2d_any_overlap": 0.6599829782417227,
+   "auc_2d_aligned": 0.8766048259240515,
+   "auc_clocs": 0.9652281149947836,
+   "real_with_aligned_2d_above_0p5": 0.7482614742698191
+  },
+  "50-100": {
+   "boxes": 33937,
+   "real_cars": 1557,
+   "auc_second": 0.9557414402588402,
+   "auc_2d_any_overlap": 0.6584961696425278,
+   "auc_2d_aligned": 0.852968046039663,
+   "auc_clocs": 0.9516089643575032,
+   "real_with_aligned_2d_above_0p5": 0.5561978163134232
+  },
+  "100-200": {
+   "boxes": 38721,
+   "real_cars": 215,
+   "auc_second": 0.9447738135645426,
+   "auc_2d_any_overlap": 0.5649793629262247,
+   "auc_2d_aligned": 0.8313145399267284,
+   "auc_clocs": 0.9465709360909021,
+   "real_with_aligned_2d_above_0p5": 0.35348837209302325
+  }
+ },
+ "val": {
+  "0-30": {
+   "boxes": 20746,
+   "real_cars": 2476,
+   "auc_second": 0.999150619897375,
+   "auc_2d_any_overlap": 0.8746231474039117,
+   "auc_2d_aligned": 0.9826552528797529,
+   "auc_clocs": 0.9991667573014016,
+   "real_with_aligned_2d_above_0p5": 0.9680936995153473
+  },
+  "30-50": {
+   "boxes": 31548,
+   "real_cars": 1408,
+   "auc_second": 0.98845494227695,
+   "auc_2d_any_overlap": 0.8174656644937263,
+   "auc_2d_aligned": 0.9647172569674851,
+   "auc_clocs": 0.9945726053040357,
+   "real_with_aligned_2d_above_0p5": 0.8948863636363636
+  },
+  "50-100": {
+   "boxes": 152294,
+   "real_cars": 6202,
+   "auc_second": 0.9716710015916517,
+   "auc_2d_any_overlap": 0.8517144804646298,
+   "auc_2d_aligned": 0.8224741537279946,
+   "auc_clocs": 0.9719480376423976,
+   "real_with_aligned_2d_above_0p5": 0.4492099322799097
+  },
+  "100-200": {
+   "boxes": 206874,
+   "real_cars": 4639,
+   "auc_second": 0.908882399031308,
+   "auc_2d_any_overlap": 0.7033378136423974,
+   "auc_2d_aligned": 0.6517817325425874,
+   "auc_clocs": 0.8733763887628824,
+   "real_with_aligned_2d_above_0p5": 0.08320758784220737
+  }
+ }
+}

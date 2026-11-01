@@ -118,3 +118,9 @@ d2_detection_data/
 
 # Local training runs (checkpoints, per-eval detections); results/ holds the documented copies
 training_runs/
+
+# CLOCs-R outputs (checkpoints, cached candidates); results/ holds the documented copies
+runs/
+
+# Detector weights trained on aiMotive; too large for git, published as a GitHub Release instead
+pretrained/

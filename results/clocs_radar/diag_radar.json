@@ -1,0 +1,1546 @@
+{
+ "sequences": {
+  "train": [
+   {
+    "seq": "20210401-073402-00.19.00-00.19.15@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 1652,
+    "off_label_near_zero": 0.8795399515738499,
+    "off_label_median": -0.019223909825086594,
+    "cars": 43,
+    "label_agreement": 0.07351316160296761,
+    "label_within_2": 0.5813953488372093
+   },
+   {
+    "seq": "20210401-073402-00.19.45-00.20.00@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 1276,
+    "off_label_near_zero": 0.9310344827586207,
+    "off_label_median": 0.11423461139202118,
+    "cars": 22,
+    "label_agreement": 0.1915371384213138,
+    "label_within_2": 0.7272727272727273
+   },
+   {
+    "seq": "20210401-073402-00.21.30-00.21.45@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 1497,
+    "off_label_near_zero": 0.9084836339345357,
+    "off_label_median": -0.013158055953681469,
+    "cars": 0,
+    "label_agreement": null,
+    "label_within_2": null
+   },
+   {
+    "seq": "20210401-073402-00.38.15-00.38.30@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 1452,
+    "off_label_near_zero": 0.9703856749311295,
+    "off_label_median": 0.03743726760149002,
+    "cars": 12,
+    "label_agreement": 16.049295609742067,
+    "label_within_2": 0.4166666666666667
+   },
+   {
+    "seq": "20210401-073402-01.21.30-01.21.45@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 1400,
+    "off_label_near_zero": 0.945,
+    "off_label_median": 0.06771659851074219,
+    "cars": 0,
+    "label_agreement": null,
+    "label_within_2": null
+   },
+   {
+    "seq": "20210401-073402-01.22.15-01.22.30@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 1397,
+    "off_label_near_zero": 0.9441660701503222,
+    "off_label_median": -0.06577616184949875,
+    "cars": 41,
+    "label_agreement": 0.032907768237116386,
+    "label_within_2": 0.8292682926829268
+   },
+   {
+    "seq": "20210401-073402-01.42.45-01.43.00@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 692,
+    "off_label_near_zero": 0.8598265895953757,
+    "off_label_median": 0.003233976662158966,
+    "cars": 39,
+    "label_agreement": 0.06657678849240867,
+    "label_within_2": 0.6666666666666666
+   },
+   {
+    "seq": "20210401-093047-00.06.45-00.07.00@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 736,
+    "off_label_near_zero": 0.9008152173913043,
+    "off_label_median": -0.07626640796661377,
+    "cars": 54,
+    "label_agreement": 0.036912452739692014,
+    "label_within_2": 0.8518518518518519
+   },
+   {
+    "seq": "20210401-093047-00.15.00-00.15.15@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 238,
+    "off_label_near_zero": 0.5882352941176471,
+    "off_label_median": 0.07260465621948242,
+    "cars": 65,
+    "label_agreement": 0.054729869116851404,
+    "label_within_2": 0.9076923076923077
+   },
+   {
+    "seq": "20210401-093047-00.20.45-00.21.00@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 388,
+    "off_label_near_zero": 0.8479381443298969,
+    "off_label_median": -0.03486039116978645,
+    "cars": 84,
+    "label_agreement": 0.05271638014867186,
+    "label_within_2": 0.9404761904761905
+   },
+   {
+    "seq": "20210401-093047-00.29.00-00.29.15@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 884,
+    "off_label_near_zero": 0.7285067873303167,
+    "off_label_median": -0.0057436018250882626,
+    "cars": 76,
+    "label_agreement": 0.1633153253775106,
+    "label_within_2": 0.8289473684210527
+   },
+   {
+    "seq": "20210401-093047-00.29.45-00.30.00@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 516,
+    "off_label_near_zero": 0.5271317829457365,
+    "off_label_median": 0.07979761064052582,
+    "cars": 73,
+    "label_agreement": 0.06150588298582349,
+    "label_within_2": 0.8904109589041096
+   },
+   {
+    "seq": "20210401-093047-00.33.30-00.33.45@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 831,
+    "off_label_near_zero": 0.7882069795427196,
+    "off_label_median": 0.08844269067049026,
+    "cars": 105,
+    "label_agreement": 0.06425721663559258,
+    "label_within_2": 0.9619047619047619
+   },
+   {
+    "seq": "20210401-093047-00.34.00-00.34.15@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 637,
+    "off_label_near_zero": 0.6185243328100472,
+    "off_label_median": -0.012221135199069977,
+    "cars": 71,
+    "label_agreement": 0.04065940399919654,
+    "label_within_2": 0.8309859154929577
+   },
+   {
+    "seq": "20210401-093047-00.36.15-00.36.30@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 570,
+    "off_label_near_zero": 0.8175438596491228,
+    "off_label_median": 0.018589692190289497,
+    "cars": 77,
+    "label_agreement": 0.051345597323042114,
+    "label_within_2": 0.961038961038961
+   },
+   {
+    "seq": "20210401-093047-00.48.15-00.48.30@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 1123,
+    "off_label_near_zero": 0.9323241317898486,
+    "off_label_median": -0.0236542709171772,
+    "cars": 56,
+    "label_agreement": 0.058033630672493786,
+    "label_within_2": 0.9285714285714286
+   },
+   {
+    "seq": "20210401-093047-01.57.15-01.57.30@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 1408,
+    "off_label_near_zero": 0.9375,
+    "off_label_median": 0.0912463515996933,
+    "cars": 33,
+    "label_agreement": 0.02604578166663174,
+    "label_within_2": 1.0
+   },
+   {
+    "seq": "20210401-093047-01.57.45-01.58.00@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 1374,
+    "off_label_near_zero": 0.9272197962154294,
+    "off_label_median": -0.016261551529169083,
+    "cars": 57,
+    "label_agreement": 0.0731364691590386,
+    "label_within_2": 0.9824561403508771
+   },
+   {
+    "seq": "20210401-093047-02.17.30-02.17.45@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 304,
+    "off_label_near_zero": 0.7828947368421053,
+    "off_label_median": -0.0008994697709567845,
+    "cars": 48,
+    "label_agreement": 0.031935576154987544,
+    "label_within_2": 0.9375
+   },
+   {
+    "seq": "20210401-093047-02.20.30-02.20.45@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 1744,
+    "off_label_near_zero": 0.8520642201834863,
+    "off_label_median": -0.009091517888009548,
+    "cars": 0,
+    "label_agreement": null,
+    "label_within_2": null
+   },
+   {
+    "seq": "20210401-120439-00.07.30-00.07.45@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 834,
+    "off_label_near_zero": 0.86810551558753,
+    "off_label_median": -0.08173476159572601,
+    "cars": 27,
+    "label_agreement": 0.07088922737327152,
+    "label_within_2": 1.0
+   },
+   {
+    "seq": "20210401-120439-00.08.00-00.08.15@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 190,
+    "off_label_near_zero": 0.5,
+    "off_label_median": 0.02158532664179802,
+    "cars": 47,
+    "label_agreement": 0.1307274147076356,
+    "label_within_2": 1.0
+   },
+   {
+    "seq": "20210401-120439-00.17.00-00.17.15@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 333,
+    "off_label_near_zero": 0.4924924924924925,
+    "off_label_median": 0.17143487930297852,
+    "cars": 32,
+    "label_agreement": 0.1155770142859609,
+    "label_within_2": 0.875
+   },
+   {
+    "seq": "20210401-120439-00.37.15-00.37.30@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 1446,
+    "off_label_near_zero": 0.9156293222683264,
+    "off_label_median": 0.055240172892808914,
+    "cars": 78,
+    "label_agreement": 0.0513517036781046,
+    "label_within_2": 0.7051282051282052
+   },
+   {
+    "seq": "20210401-150723-00.04.00-00.04.15@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 1321,
+    "off_label_near_zero": 0.9258137774413323,
+    "off_label_median": 0.03429701551795006,
+    "cars": 45,
+    "label_agreement": 0.10857095192103827,
+    "label_within_2": 0.8888888888888888
+   },
+   {
+    "seq": "20210512-140820-00.19.15-00.19.30@Yoda",
+    "odd": "highway",
+    "off_label_returns": 1316,
+    "off_label_near_zero": 0.9369300911854104,
+    "off_label_median": -0.03360782563686371,
+    "cars": 90,
+    "label_agreement": 0.05137968795501102,
+    "label_within_2": 0.9
+   },
+   {
+    "seq": "20210512-140820-00.21.15-00.21.30@Yoda",
+    "odd": "highway",
+    "off_label_returns": 432,
+    "off_label_near_zero": 0.8842592592592593,
+    "off_label_median": 0.020807048305869102,
+    "cars": 126,
+    "label_agreement": 0.05198124330701326,
+    "label_within_2": 1.0
+   },
+   {
+    "seq": "20210512-140820-00.25.30-00.25.45@Yoda",
+    "odd": "highway",
+    "off_label_returns": 1200,
+    "off_label_near_zero": 0.885,
+    "off_label_median": 0.0677257552742958,
+    "cars": 50,
+    "label_agreement": 0.052439173176184184,
+    "label_within_2": 0.8
+   },
+   {
+    "seq": "20210512-140820-00.39.15-00.39.30@Yoda",
+    "odd": "highway",
+    "off_label_returns": 1916,
+    "off_label_near_zero": 0.9483298538622129,
+    "off_label_median": 0.010280685499310493,
+    "cars": 1,
+    "label_agreement": 13.831420317102076,
+    "label_within_2": 0.0
+   },
+   {
+    "seq": "20210512-140820-00.45.00-00.45.15@Yoda",
+    "odd": "highway",
+    "off_label_returns": 1163,
+    "off_label_near_zero": 0.8890799656061908,
+    "off_label_median": -0.06841420382261276,
+    "cars": 35,
+    "label_agreement": 0.014510831544136238,
+    "label_within_2": 1.0
+   },
+   {
+    "seq": "20210512-140820-00.46.30-00.46.45@Yoda",
+    "odd": "highway",
+    "off_label_returns": 1664,
+    "off_label_near_zero": 0.9242788461538461,
+    "off_label_median": 0.062427014112472534,
+    "cars": 32,
+    "label_agreement": 0.07744719683680046,
+    "label_within_2": 0.6875
+   },
+   {
+    "seq": "20210512-140820-00.49.30-00.49.45@Yoda",
+    "odd": "highway",
+    "off_label_returns": 1493,
+    "off_label_near_zero": 0.9316811788345613,
+    "off_label_median": 0.02263951487839222,
+    "cars": 102,
+    "label_agreement": 0.03106064679969478,
+    "label_within_2": 0.8333333333333334
+   },
+   {
+    "seq": "20210512-140820-00.57.30-00.57.45@Yoda",
+    "odd": "highway",
+    "off_label_returns": 1706,
+    "off_label_near_zero": 0.9255568581477139,
+    "off_label_median": 0.03561165928840637,
+    "cars": 108,
+    "label_agreement": 0.07118356980575946,
+    "label_within_2": 0.9629629629629629
+   },
+   {
+    "seq": "20210512-140820-00.58.45-00.59.00@Yoda",
+    "odd": "highway",
+    "off_label_returns": 1550,
+    "off_label_near_zero": 0.9716129032258064,
+    "off_label_median": 0.015012855641543865,
+    "cars": 34,
+    "label_agreement": 0.02677740665749795,
+    "label_within_2": 0.7941176470588235
+   },
+   {
+    "seq": "20210512-140820-00.59.45-01.00.00@Yoda",
+    "odd": "highway",
+    "off_label_returns": 1448,
+    "off_label_near_zero": 0.9191988950276243,
+    "off_label_median": 0.007355098612606525,
+    "cars": 30,
+    "label_agreement": 0.15243564234373608,
+    "label_within_2": 0.6
+   },
+   {
+    "seq": "20210512-140820-01.04.30-01.04.45@Yoda",
+    "odd": "highway",
+    "off_label_returns": 1310,
+    "off_label_near_zero": 0.9099236641221374,
+    "off_label_median": 0.013926669955253601,
+    "cars": 96,
+    "label_agreement": 0.03234318171107198,
+    "label_within_2": 0.9791666666666666
+   },
+   {
+    "seq": "20210514-102655-00.26.30-00.26.45@Yoda",
+    "odd": "highway",
+    "off_label_returns": 1737,
+    "off_label_near_zero": 0.948762233736327,
+    "off_label_median": 0.012269949540495872,
+    "cars": 88,
+    "label_agreement": 0.07582374408114845,
+    "label_within_2": 0.6931818181818182
+   },
+   {
+    "seq": "20210608-094428-00.36.15-00.36.30@Yoda",
+    "odd": "highway",
+    "off_label_returns": 1276,
+    "off_label_near_zero": 0.9067398119122257,
+    "off_label_median": 0.003312491113319993,
+    "cars": 92,
+    "label_agreement": 0.09306790365083728,
+    "label_within_2": 0.7608695652173914
+   },
+   {
+    "seq": "20210608-094428-00.51.45-00.52.00@Yoda",
+    "odd": "highway",
+    "off_label_returns": 1595,
+    "off_label_near_zero": 0.9510971786833856,
+    "off_label_median": 0.011788473464548588,
+    "cars": 106,
+    "label_agreement": 0.06133201291017265,
+    "label_within_2": 0.8490566037735849
+   },
+   {
+    "seq": "20210608-094428-00.57.15-00.57.30@Yoda",
+    "odd": "highway",
+    "off_label_returns": 1877,
+    "off_label_near_zero": 0.943526904635056,
+    "off_label_median": 0.02382875420153141,
+    "cars": 35,
+    "label_agreement": 0.052707927182421344,
+    "label_within_2": 0.9428571428571428
+   },
+   {
+    "seq": "20210608-094428-00.59.15-00.59.30@Yoda",
+    "odd": "highway",
+    "off_label_returns": 1230,
+    "off_label_near_zero": 0.9,
+    "off_label_median": 0.014624069444835186,
+    "cars": 86,
+    "label_agreement": 0.0455253993203204,
+    "label_within_2": 0.813953488372093
+   },
+   {
+    "seq": "20210608-094428-01.01.45-01.02.00@Yoda",
+    "odd": "highway",
+    "off_label_returns": 1513,
+    "off_label_near_zero": 0.923331130204891,
+    "off_label_median": 0.0338854044675827,
+    "cars": 34,
+    "label_agreement": 0.03878577013307449,
+    "label_within_2": 1.0
+   },
+   {
+    "seq": "20210608-094428-01.09.30-01.09.45@Yoda",
+    "odd": "highway",
+    "off_label_returns": 366,
+    "off_label_near_zero": 0.8387978142076503,
+    "off_label_median": -0.0060289218090474606,
+    "cars": 25,
+    "label_agreement": 0.07782943506073359,
+    "label_within_2": 1.0
+   },
+   {
+    "seq": "20210608-094428-01.10.45-01.11.00@Yoda",
+    "odd": "highway",
+    "off_label_returns": 1115,
+    "off_label_near_zero": 0.9408071748878923,
+    "off_label_median": 0.017314253374934196,
+    "cars": 47,
+    "label_agreement": 0.026652181300590883,
+    "label_within_2": 0.8723404255319149
+   },
+   {
+    "seq": "20210608-094428-01.12.15-01.12.30@Yoda",
+    "odd": "highway",
+    "off_label_returns": 1899,
+    "off_label_near_zero": 0.913638757240653,
+    "off_label_median": -0.03422814607620239,
+    "cars": 34,
+    "label_agreement": 0.07432024555175332,
+    "label_within_2": 1.0
+   },
+   {
+    "seq": "20210608-094428-01.19.00-01.19.15@Yoda",
+    "odd": "highway",
+    "off_label_returns": 1643,
+    "off_label_near_zero": 0.8734023128423616,
+    "off_label_median": 0.09496450424194336,
+    "cars": 64,
+    "label_agreement": 0.08248217627719967,
+    "label_within_2": 0.984375
+   },
+   {
+    "seq": "20210608-094428-01.25.00-01.25.15@Yoda",
+    "odd": "highway",
+    "off_label_returns": 1666,
+    "off_label_near_zero": 0.8721488595438175,
+    "off_label_median": -0.0086860042065382,
+    "cars": 52,
+    "label_agreement": 0.0409985298709703,
+    "label_within_2": 0.9807692307692307
+   },
+   {
+    "seq": "20210608-094428-01.25.15-01.25.30@Yoda",
+    "odd": "highway",
+    "off_label_returns": 1965,
+    "off_label_near_zero": 0.8666666666666667,
+    "off_label_median": 0.03987438604235649,
+    "cars": 59,
+    "label_agreement": 0.025271172495294536,
+    "label_within_2": 0.9830508474576272
+   },
+   {
+    "seq": "20210608-094428-01.25.45-01.26.00@Yoda",
+    "odd": "highway",
+    "off_label_returns": 1369,
+    "off_label_near_zero": 0.8955441928414901,
+    "off_label_median": -0.0018572892295196652,
+    "cars": 66,
+    "label_agreement": 0.06119547774490819,
+    "label_within_2": 0.8787878787878788
+   },
+   {
+    "seq": "20210610-135429-00.10.30-00.10.45@Yoda",
+    "odd": "highway",
+    "off_label_returns": 1901,
+    "off_label_near_zero": 0.8884797475013151,
+    "off_label_median": 0.015546231530606747,
+    "cars": 35,
+    "label_agreement": 0.06262623893491792,
+    "label_within_2": 0.9428571428571428
+   },
+   {
+    "seq": "20210728-101001-00.04.30-00.04.45@Yoda",
+    "odd": "highway",
+    "off_label_returns": 1082,
+    "off_label_near_zero": 0.8428835489833642,
+    "off_label_median": 0.0542144849896431,
+    "cars": 93,
+    "label_agreement": 0.046165240542887176,
+    "label_within_2": 0.7849462365591398
+   },
+   {
+    "seq": "20210728-101001-00.07.30-00.07.45@Yoda",
+    "odd": "highway",
+    "off_label_returns": 1466,
+    "off_label_near_zero": 0.9338335607094134,
+    "off_label_median": 0.006870496552437544,
+    "cars": 36,
+    "label_agreement": 0.04123361135745007,
+    "label_within_2": 0.8333333333333334
+   },
+   {
+    "seq": "20220202-105828-00.33.30-00.33.45@Cali",
+    "odd": "highway",
+    "off_label_returns": 174,
+    "off_label_near_zero": 0.5689655172413793,
+    "off_label_median": 0.10657092928886414,
+    "cars": 108,
+    "label_agreement": 0.08542667225196965,
+    "label_within_2": 0.9537037037037037
+   },
+   {
+    "seq": "20220202-105828-00.34.00-00.34.15@Cali",
+    "odd": "highway",
+    "off_label_returns": 146,
+    "off_label_near_zero": 0.7191780821917808,
+    "off_label_median": 0.04096835106611252,
+    "cars": 205,
+    "label_agreement": 0.06949956032369542,
+    "label_within_2": 0.9414634146341463
+   },
+   {
+    "seq": "20220202-105828-00.50.30-00.50.45@Cali",
+    "odd": "highway",
+    "off_label_returns": 482,
+    "off_label_near_zero": 0.8464730290456431,
+    "off_label_median": -0.05715931951999664,
+    "cars": 36,
+    "label_agreement": 0.07181125571970348,
+    "label_within_2": 0.9444444444444444
+   },
+   {
+    "seq": "20220202-105828-00.54.30-00.54.45@Cali",
+    "odd": "highway",
+    "off_label_returns": 279,
+    "off_label_near_zero": 0.5519713261648745,
+    "off_label_median": 0.10010042041540146,
+    "cars": 164,
+    "label_agreement": 0.0689550556393499,
+    "label_within_2": 0.9390243902439024
+   },
+   {
+    "seq": "20220202-143005-00.08.45-00.09.00@Cali",
+    "odd": "highway",
+    "off_label_returns": 396,
+    "off_label_near_zero": 0.7828282828282829,
+    "off_label_median": -0.017086490988731384,
+    "cars": 70,
+    "label_agreement": 0.08213189941047538,
+    "label_within_2": 0.9857142857142858
+   },
+   {
+    "seq": "20220202-143005-00.22.30-00.22.45@Cali",
+    "odd": "highway",
+    "off_label_returns": 702,
+    "off_label_near_zero": 0.7905982905982906,
+    "off_label_median": 0.11363980174064636,
+    "cars": 57,
+    "label_agreement": 0.03804730771764042,
+    "label_within_2": 0.9473684210526315
+   },
+   {
+    "seq": "20220203-135331-00.38.15-00.38.30@Cali",
+    "odd": "highway",
+    "off_label_returns": 285,
+    "off_label_near_zero": 0.8701754385964913,
+    "off_label_median": -0.06378205865621567,
+    "cars": 125,
+    "label_agreement": 0.06273734159890054,
+    "label_within_2": 0.976
+   },
+   {
+    "seq": "20220203-144759-00.34.30-00.34.45@Cali",
+    "odd": "highway",
+    "off_label_returns": 211,
+    "off_label_near_zero": 0.1895734597156398,
+    "off_label_median": 15.24486255645752,
+    "cars": 295,
+    "label_agreement": 0.09308001573119284,
+    "label_within_2": 0.9254237288135593
+   },
+   {
+    "seq": "20220203-144759-00.40.00-00.40.15@Cali",
+    "odd": "highway",
+    "off_label_returns": 273,
+    "off_label_near_zero": 0.4175824175824176,
+    "off_label_median": 25.549402236938477,
+    "cars": 145,
+    "label_agreement": 0.041086423877359834,
+    "label_within_2": 0.8758620689655172
+   },
+   {
+    "seq": "20220203-144759-00.53.00-00.53.15@Cali",
+    "odd": "highway",
+    "off_label_returns": 239,
+    "off_label_near_zero": 0.5188284518828452,
+    "off_label_median": 0.01485381368547678,
+    "cars": 217,
+    "label_agreement": 0.09328687261079516,
+    "label_within_2": 0.9447004608294931
+   },
+   {
+    "seq": "20220204-100251-00.53.45-00.54.00@Cali",
+    "odd": "highway",
+    "off_label_returns": 412,
+    "off_label_near_zero": 0.28640776699029125,
+    "off_label_median": 5.666040897369385,
+    "cars": 76,
+    "label_agreement": 0.0662569528105208,
+    "label_within_2": 0.9736842105263158
+   },
+   {
+    "seq": "20210604-051512-00.11.45-00.12.00@Yoda",
+    "odd": "urban",
+    "off_label_returns": 1462,
+    "off_label_near_zero": 0.9466484268125855,
+    "off_label_median": 0.0385785847902298,
+    "cars": 71,
+    "label_agreement": 0.054278246360952034,
+    "label_within_2": 0.8732394366197183
+   },
+   {
+    "seq": "20210604-051512-00.12.45-00.13.00@Yoda",
+    "odd": "urban",
+    "off_label_returns": 1045,
+    "off_label_near_zero": 0.9444976076555024,
+    "off_label_median": 0.013157205656170845,
+    "cars": 160,
+    "label_agreement": 0.06308498073786861,
+    "label_within_2": 0.91875
+   },
+   {
+    "seq": "20210604-051512-00.18.15-00.18.30@Yoda",
+    "odd": "urban",
+    "off_label_returns": 1203,
+    "off_label_near_zero": 0.9343308395677473,
+    "off_label_median": 0.0009625576785765588,
+    "cars": 28,
+    "label_agreement": 0.14070058207831249,
+    "label_within_2": 0.9642857142857143
+   },
+   {
+    "seq": "20210604-054939-00.09.30-00.09.45@Yoda",
+    "odd": "urban",
+    "off_label_returns": 731,
+    "off_label_near_zero": 0.801641586867305,
+    "off_label_median": 0.07019199430942535,
+    "cars": 112,
+    "label_agreement": 0.053200304110735175,
+    "label_within_2": 0.9553571428571429
+   },
+   {
+    "seq": "20210604-062629-00.13.15-00.13.30@Yoda",
+    "odd": "urban",
+    "off_label_returns": 646,
+    "off_label_near_zero": 0.4938080495356037,
+    "off_label_median": 0.15285682678222656,
+    "cars": 275,
+    "label_agreement": 0.05419666372932852,
+    "label_within_2": 0.9127272727272727
+   },
+   {
+    "seq": "20210608-112037-00.12.15-00.12.30@Yoda",
+    "odd": "urban",
+    "off_label_returns": 742,
+    "off_label_near_zero": 0.876010781671159,
+    "off_label_median": 0.01676199957728386,
+    "cars": 108,
+    "label_agreement": 0.03362980425986173,
+    "label_within_2": 0.9629629629629629
+   },
+   {
+    "seq": "20210608-112037-00.12.30-00.12.45@Yoda",
+    "odd": "urban",
+    "off_label_returns": 637,
+    "off_label_near_zero": 0.8963893249607535,
+    "off_label_median": -0.133240208029747,
+    "cars": 128,
+    "label_agreement": 0.14288340460681748,
+    "label_within_2": 0.96875
+   },
+   {
+    "seq": "20210608-112037-00.33.30-00.33.45@Yoda",
+    "odd": "urban",
+    "off_label_returns": 699,
+    "off_label_near_zero": 0.7811158798283262,
+    "off_label_median": 0.006744780112057924,
+    "cars": 121,
+    "label_agreement": 0.05696209661404694,
+    "label_within_2": 0.9338842975206612
+   },
+   {
+    "seq": "20210625-175142-00.15.00-00.15.15@Yoda",
+    "odd": "urban",
+    "off_label_returns": 47,
+    "off_label_near_zero": 0.9787234042553191,
+    "off_label_median": -0.14992612600326538,
+    "cars": 27,
+    "label_agreement": 0.025520311571521216,
+    "label_within_2": 1.0
+   },
+   {
+    "seq": "20210625-184237-00.19.45-00.20.00@Yoda",
+    "odd": "urban",
+    "off_label_returns": 581,
+    "off_label_near_zero": 0.891566265060241,
+    "off_label_median": -0.05074949935078621,
+    "cars": 128,
+    "label_agreement": 0.06308165958870271,
+    "label_within_2": 0.8984375
+   },
+   {
+    "seq": "20210629-154241-00.11.15-00.11.30@Yoda",
+    "odd": "urban",
+    "off_label_returns": 377,
+    "off_label_near_zero": 0.7877984084880637,
+    "off_label_median": 0.046887416392564774,
+    "cars": 154,
+    "label_agreement": 0.05051741734278714,
+    "label_within_2": 0.974025974025974
+   },
+   {
+    "seq": "20210630-130826-00.29.45-00.30.00@Yoda",
+    "odd": "urban",
+    "off_label_returns": 769,
+    "off_label_near_zero": 0.8725617685305592,
+    "off_label_median": -0.015754658728837967,
+    "cars": 165,
+    "label_agreement": 0.09257204972237787,
+    "label_within_2": 0.8848484848484849
+   },
+   {
+    "seq": "20210707-153434-00.04.15-00.04.30@Yoda",
+    "odd": "urban",
+    "off_label_returns": 511,
+    "off_label_near_zero": 0.8414872798434442,
+    "off_label_median": 0.051706910133361816,
+    "cars": 120,
+    "label_agreement": 0.11859473316869185,
+    "label_within_2": 0.9666666666666667
+   },
+   {
+    "seq": "20210723-185838-00.14.15-00.14.30@Yoda",
+    "odd": "urban",
+    "off_label_returns": 1139,
+    "off_label_near_zero": 0.8981562774363476,
+    "off_label_median": 0.0018011427018791437,
+    "cars": 26,
+    "label_agreement": 0.24953188782932756,
+    "label_within_2": 0.8461538461538461
+   },
+   {
+    "seq": "20210724-064134-00.10.30-00.10.45@Yoda",
+    "odd": "urban",
+    "off_label_returns": 976,
+    "off_label_near_zero": 0.930327868852459,
+    "off_label_median": 0.15909259021282196,
+    "cars": 82,
+    "label_agreement": 0.08940181403400296,
+    "label_within_2": 0.975609756097561
+   },
+   {
+    "seq": "20210727-144024-00.04.15-00.04.30@Yoda",
+    "odd": "urban",
+    "off_label_returns": 889,
+    "off_label_near_zero": 0.9100112485939258,
+    "off_label_median": 0.16268137097358704,
+    "cars": 113,
+    "label_agreement": 0.08773469790793165,
+    "label_within_2": 0.9557522123893806
+   },
+   {
+    "seq": "20210727-144024-00.05.15-00.05.30@Yoda",
+    "odd": "urban",
+    "off_label_returns": 9,
+    "off_label_near_zero": 1.0,
+    "off_label_median": -0.30700212717056274,
+    "cars": 14,
+    "label_agreement": 0.20426622978578118,
+    "label_within_2": 1.0
+   },
+   {
+    "seq": "20210727-144024-00.06.00-00.06.15@Yoda",
+    "odd": "urban",
+    "off_label_returns": 635,
+    "off_label_near_zero": 0.8031496062992126,
+    "off_label_median": 0.038911670446395874,
+    "cars": 160,
+    "label_agreement": 0.05558896110374789,
+    "label_within_2": 0.93125
+   },
+   {
+    "seq": "20210727-144024-00.18.00-00.18.15@Yoda",
+    "odd": "urban",
+    "off_label_returns": 940,
+    "off_label_near_zero": 0.9191489361702128,
+    "off_label_median": 0.01366787776350975,
+    "cars": 229,
+    "label_agreement": 0.08341510190959944,
+    "label_within_2": 0.868995633187773
+   },
+   {
+    "seq": "20210727-144024-00.20.45-00.21.00@Yoda",
+    "odd": "urban",
+    "off_label_returns": 313,
+    "off_label_near_zero": 0.8594249201277955,
+    "off_label_median": -0.01122977863997221,
+    "cars": 127,
+    "label_agreement": 0.23325294493533644,
+    "label_within_2": 0.968503937007874
+   },
+   {
+    "seq": "20210727-144024-00.21.30-00.21.45@Yoda",
+    "odd": "urban",
+    "off_label_returns": 674,
+    "off_label_near_zero": 0.8887240356083086,
+    "off_label_median": 0.02517777681350708,
+    "cars": 179,
+    "label_agreement": 0.15305748590369816,
+    "label_within_2": 0.9441340782122905
+   },
+   {
+    "seq": "20210728-063719-00.18.30-00.18.45@Yoda",
+    "odd": "urban",
+    "off_label_returns": 294,
+    "off_label_near_zero": 0.5306122448979592,
+    "off_label_median": 0.08642923831939697,
+    "cars": 85,
+    "label_agreement": 0.03453188629749171,
+    "label_within_2": 0.9647058823529412
+   },
+   {
+    "seq": "20210729-162718-00.16.45-00.17.00@Yoda",
+    "odd": "urban",
+    "off_label_returns": 1030,
+    "off_label_near_zero": 0.9097087378640777,
+    "off_label_median": 0.008863957598805428,
+    "cars": 200,
+    "label_agreement": 0.10199775359209817,
+    "label_within_2": 0.83
+   },
+   {
+    "seq": "20210729-162718-00.18.00-00.18.15@Yoda",
+    "odd": "urban",
+    "off_label_returns": 169,
+    "off_label_near_zero": 0.8402366863905325,
+    "off_label_median": 0.22209961712360382,
+    "cars": 110,
+    "label_agreement": 0.11965336276237121,
+    "label_within_2": 0.9
+   },
+   {
+    "seq": "20210729-162718-00.32.00-00.32.15@Yoda",
+    "odd": "urban",
+    "off_label_returns": 752,
+    "off_label_near_zero": 0.7726063829787234,
+    "off_label_median": -0.01704159751534462,
+    "cars": 175,
+    "label_agreement": 0.05542701647784298,
+    "label_within_2": 0.8971428571428571
+   },
+   {
+    "seq": "20210729-162718-00.34.30-00.34.45@Yoda",
+    "odd": "urban",
+    "off_label_returns": 390,
+    "off_label_near_zero": 0.8205128205128205,
+    "off_label_median": 0.027710910886526108,
+    "cars": 158,
+    "label_agreement": 0.05079300026989486,
+    "label_within_2": 0.9493670886075949
+   },
+   {
+    "seq": "20210729-191833-00.17.15-00.17.30@Yoda",
+    "odd": "urban",
+    "off_label_returns": 523,
+    "off_label_near_zero": 0.887189292543021,
+    "off_label_median": 0.0609121099114418,
+    "cars": 315,
+    "label_agreement": 0.05084887296865226,
+    "label_within_2": 0.8888888888888888
+   },
+   {
+    "seq": "20210806-155941-00.17.00-00.17.15@Yoda",
+    "odd": "urban",
+    "off_label_returns": 694,
+    "off_label_near_zero": 0.9351585014409222,
+    "off_label_median": -0.01056721992790699,
+    "cars": 196,
+    "label_agreement": 0.06632475635532123,
+    "label_within_2": 0.9744897959183674
+   },
+   {
+    "seq": "20210806-155941-00.17.15-00.17.30@Yoda",
+    "odd": "urban",
+    "off_label_returns": 424,
+    "off_label_near_zero": 0.839622641509434,
+    "off_label_median": 0.0778210461139679,
+    "cars": 333,
+    "label_agreement": 0.05466753386262757,
+    "label_within_2": 0.93993993993994
+   },
+   {
+    "seq": "20210806-155941-00.19.00-00.19.15@Yoda",
+    "odd": "urban",
+    "off_label_returns": 350,
+    "off_label_near_zero": 0.8542857142857143,
+    "off_label_median": 0.04834698140621185,
+    "cars": 170,
+    "label_agreement": 0.05833473190668936,
+    "label_within_2": 0.9588235294117647
+   },
+   {
+    "seq": "20210806-155941-00.24.30-00.24.45@Yoda",
+    "odd": "urban",
+    "off_label_returns": 632,
+    "off_label_near_zero": 0.8322784810126582,
+    "off_label_median": -0.023839201778173447,
+    "cars": 132,
+    "label_agreement": 0.05067726567794162,
+    "label_within_2": 0.9848484848484849
+   },
+   {
+    "seq": "20210806-185601-00.22.15-00.22.30@Yoda",
+    "odd": "urban",
+    "off_label_returns": 692,
+    "off_label_near_zero": 0.8771676300578035,
+    "off_label_median": 0.06631632149219513,
+    "cars": 266,
+    "label_agreement": 0.08815506991282795,
+    "label_within_2": 0.9511278195488722
+   },
+   {
+    "seq": "20210810-160640-00.12.45-00.13.00@Yoda",
+    "odd": "urban",
+    "off_label_returns": 424,
+    "off_label_near_zero": 0.7712264150943396,
+    "off_label_median": 0.018484044820070267,
+    "cars": 202,
+    "label_agreement": 0.09300376613984529,
+    "label_within_2": 0.9356435643564357
+   },
+   {
+    "seq": "20210810-160640-00.13.30-00.13.45@Yoda",
+    "odd": "urban",
+    "off_label_returns": 0,
+    "off_label_near_zero": null,
+    "off_label_median": null,
+    "cars": 35,
+    "label_agreement": 0.004725262547513478,
+    "label_within_2": 1.0
+   },
+   {
+    "seq": "20210810-160640-00.18.45-00.19.00@Yoda",
+    "odd": "urban",
+    "off_label_returns": 634,
+    "off_label_near_zero": 0.9526813880126183,
+    "off_label_median": -0.046436987817287445,
+    "cars": 90,
+    "label_agreement": 0.15821920805851875,
+    "label_within_2": 0.9666666666666667
+   },
+   {
+    "seq": "20210810-160640-00.20.00-00.20.15@Yoda",
+    "odd": "urban",
+    "off_label_returns": 163,
+    "off_label_near_zero": 0.7116564417177914,
+    "off_label_median": 0.020780619233846664,
+    "cars": 143,
+    "label_agreement": 0.08124498263423074,
+    "label_within_2": 0.9300699300699301
+   },
+   {
+    "seq": "20210810-160640-00.23.15-00.23.30@Yoda",
+    "odd": "urban",
+    "off_label_returns": 310,
+    "off_label_near_zero": 0.7677419354838709,
+    "off_label_median": 0.02307155355811119,
+    "cars": 154,
+    "label_agreement": 0.05882375767770032,
+    "label_within_2": 0.9675324675324676
+   },
+   {
+    "seq": "20210810-160640-00.25.30-00.25.45@Yoda",
+    "odd": "urban",
+    "off_label_returns": 236,
+    "off_label_near_zero": 0.8601694915254238,
+    "off_label_median": 0.04735967144370079,
+    "cars": 207,
+    "label_agreement": 0.0745198720611393,
+    "label_within_2": 0.9565217391304348
+   },
+   {
+    "seq": "20210810-160640-00.37.00-00.37.15@Yoda",
+    "odd": "urban",
+    "off_label_returns": 989,
+    "off_label_near_zero": 0.8382204246713852,
+    "off_label_median": 0.002101857913658023,
+    "cars": 154,
+    "label_agreement": 0.15540242497470377,
+    "label_within_2": 0.935064935064935
+   },
+   {
+    "seq": "20210810-160640-00.37.30-00.37.45@Yoda",
+    "odd": "urban",
+    "off_label_returns": 457,
+    "off_label_near_zero": 0.949671772428884,
+    "off_label_median": 0.053357020020484924,
+    "cars": 46,
+    "label_agreement": 0.11776760164539457,
+    "label_within_2": 0.9565217391304348
+   },
+   {
+    "seq": "20210810-182213-00.13.45-00.14.00@Yoda",
+    "odd": "urban",
+    "off_label_returns": 381,
+    "off_label_near_zero": 0.847769028871391,
+    "off_label_median": 0.04286569356918335,
+    "cars": 140,
+    "label_agreement": 0.04376872149305111,
+    "label_within_2": 0.9857142857142858
+   },
+   {
+    "seq": "20210810-182213-00.14.15-00.14.30@Yoda",
+    "odd": "urban",
+    "off_label_returns": 363,
+    "off_label_near_zero": 0.837465564738292,
+    "off_label_median": -0.10017003864049911,
+    "cars": 134,
+    "label_agreement": 0.07641021332778086,
+    "label_within_2": 0.9850746268656716
+   },
+   {
+    "seq": "20210810-182213-00.21.45-00.22.00@Yoda",
+    "odd": "urban",
+    "off_label_returns": 487,
+    "off_label_near_zero": 0.9075975359342916,
+    "off_label_median": 0.004034743178635836,
+    "cars": 211,
+    "label_agreement": 0.04439504465415348,
+    "label_within_2": 0.990521327014218
+   },
+   {
+    "seq": "20210818-103543-00.19.45-00.20.00@Yoda",
+    "odd": "urban",
+    "off_label_returns": 131,
+    "off_label_near_zero": 0.9312977099236641,
+    "off_label_median": -0.008285745978355408,
+    "cars": 94,
+    "label_agreement": 0.0391097413487248,
+    "label_within_2": 0.9042553191489362
+   },
+   {
+    "seq": "20210818-103543-00.20.45-00.21.00@Yoda",
+    "odd": "urban",
+    "off_label_returns": 187,
+    "off_label_near_zero": 0.8716577540106952,
+    "off_label_median": 0.1264536827802658,
+    "cars": 94,
+    "label_agreement": 0.12057825263140032,
+    "label_within_2": 0.9361702127659575
+   },
+   {
+    "seq": "20210818-103543-00.32.00-00.32.15@Yoda",
+    "odd": "urban",
+    "off_label_returns": 354,
+    "off_label_near_zero": 0.788135593220339,
+    "off_label_median": 0.1660422384738922,
+    "cars": 165,
+    "label_agreement": 0.17714681418117498,
+    "label_within_2": 0.9454545454545454
+   }
+  ],
+  "holdout": [
+   {
+    "seq": "20210401-073402-00.18.00-00.18.15@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 1176,
+    "off_label_near_zero": 0.9421768707482994,
+    "off_label_median": 0.03004501573741436,
+    "cars": 64,
+    "label_agreement": 0.09196871639845661,
+    "label_within_2": 0.578125
+   },
+   {
+    "seq": "20210401-093047-00.19.15-00.19.30@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 786,
+    "off_label_near_zero": 0.7811704834605598,
+    "off_label_median": 0.12438623607158661,
+    "cars": 50,
+    "label_agreement": 0.04052370437063324,
+    "label_within_2": 0.92
+   },
+   {
+    "seq": "20210401-093047-01.58.00-01.58.15@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 1006,
+    "off_label_near_zero": 0.9065606361829026,
+    "off_label_median": 0.0017062954138964415,
+    "cars": 61,
+    "label_agreement": 0.05591646069144929,
+    "label_within_2": 0.7868852459016393
+   },
+   {
+    "seq": "20210512-140820-00.22.45-00.23.00@Yoda",
+    "odd": "highway",
+    "off_label_returns": 1706,
+    "off_label_near_zero": 0.9355216881594373,
+    "off_label_median": 0.00883991364389658,
+    "cars": 86,
+    "label_agreement": 0.02216371780694182,
+    "label_within_2": 0.8837209302325582
+   },
+   {
+    "seq": "20210512-170124-00.34.45-00.35.00@Yoda",
+    "odd": "highway",
+    "off_label_returns": 1534,
+    "off_label_near_zero": 0.8800521512385919,
+    "off_label_median": 0.022559434175491333,
+    "cars": 124,
+    "label_agreement": 0.06723646879697398,
+    "label_within_2": 0.6290322580645161
+   },
+   {
+    "seq": "20210608-094428-01.12.30-01.12.45@Yoda",
+    "odd": "highway",
+    "off_label_returns": 1046,
+    "off_label_near_zero": 0.9015296367112811,
+    "off_label_median": -0.058671735227108,
+    "cars": 20,
+    "label_agreement": 0.15418946496526686,
+    "label_within_2": 0.9
+   },
+   {
+    "seq": "20220202-105828-00.34.15-00.34.30@Cali",
+    "odd": "highway",
+    "off_label_returns": 143,
+    "off_label_near_zero": 0.9090909090909091,
+    "off_label_median": 0.06237407401204109,
+    "cars": 162,
+    "label_agreement": 0.08440388007164223,
+    "label_within_2": 0.9876543209876543
+   },
+   {
+    "seq": "20210512-181833-00.25.00-00.25.15@Yoda",
+    "odd": "urban",
+    "off_label_returns": 29,
+    "off_label_near_zero": 0.9655172413793104,
+    "off_label_median": -0.1655006855726242,
+    "cars": 96,
+    "label_agreement": 0.12929473226570248,
+    "label_within_2": 0.9583333333333334
+   },
+   {
+    "seq": "20210625-175142-00.16.15-00.16.30@Yoda",
+    "odd": "urban",
+    "off_label_returns": 789,
+    "off_label_near_zero": 0.9290240811153359,
+    "off_label_median": 0.05847039818763733,
+    "cars": 178,
+    "label_agreement": 0.08127304040226413,
+    "label_within_2": 0.9157303370786517
+   },
+   {
+    "seq": "20210727-144024-00.12.00-00.12.15@Yoda",
+    "odd": "urban",
+    "off_label_returns": 642,
+    "off_label_near_zero": 0.8660436137071651,
+    "off_label_median": 0.0019061750499531627,
+    "cars": 80,
+    "label_agreement": 0.08361301729747694,
+    "label_within_2": 0.9
+   },
+   {
+    "seq": "20210806-155941-00.15.45-00.16.00@Yoda",
+    "odd": "urban",
+    "off_label_returns": 916,
+    "off_label_near_zero": 0.8438864628820961,
+    "off_label_median": 0.08393680304288864,
+    "cars": 141,
+    "label_agreement": 0.07154011213354572,
+    "label_within_2": 0.9361702127659575
+   },
+   {
+    "seq": "20210810-160640-00.20.15-00.20.30@Yoda",
+    "odd": "urban",
+    "off_label_returns": 292,
+    "off_label_near_zero": 0.8938356164383562,
+    "off_label_median": 0.016936160624027252,
+    "cars": 195,
+    "label_agreement": 0.10145527412441996,
+    "label_within_2": 0.9487179487179487
+   },
+   {
+    "seq": "20210818-103543-00.30.15-00.30.30@Yoda",
+    "odd": "urban",
+    "off_label_returns": 847,
+    "off_label_near_zero": 0.8488783943329398,
+    "off_label_median": 0.028191540390253067,
+    "cars": 175,
+    "label_agreement": 0.06329488830068047,
+    "label_within_2": 0.9085714285714286
+   }
+  ],
+  "val": [
+   {
+    "seq": "20210401-074452-00.01.00-00.01.15@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 3174,
+    "off_label_near_zero": 0.8128544423440454,
+    "off_label_median": -0.05561760812997818,
+    "cars": 98,
+    "label_agreement": 0.03057118593678787,
+    "label_within_2": 0.9081632653061225
+   },
+   {
+    "seq": "20210401-074452-00.01.15-00.01.30@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 4011,
+    "off_label_near_zero": 0.9114933931687859,
+    "off_label_median": 0.023651733994483948,
+    "cars": 73,
+    "label_agreement": 14.581630738145122,
+    "label_within_2": 0.4794520547945205
+   },
+   {
+    "seq": "20210401-074452-00.01.30-00.01.45@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 3280,
+    "off_label_near_zero": 0.9057926829268292,
+    "off_label_median": 0.066738560795784,
+    "cars": 76,
+    "label_agreement": 14.5925028609975,
+    "label_within_2": 0.4342105263157895
+   },
+   {
+    "seq": "20210401-074452-00.01.45-00.02.00@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 2213,
+    "off_label_near_zero": 0.9511974694984184,
+    "off_label_median": 0.04594703018665314,
+    "cars": 80,
+    "label_agreement": 0.04708503407650433,
+    "label_within_2": 0.6125
+   },
+   {
+    "seq": "20210401-074958-00.01.00-00.01.15@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 3097,
+    "off_label_near_zero": 0.881498224087827,
+    "off_label_median": 0.04415854066610336,
+    "cars": 91,
+    "label_agreement": 0.14793490934055598,
+    "label_within_2": 0.6483516483516484
+   },
+   {
+    "seq": "20210401-074958-00.01.15-00.01.30@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 2868,
+    "off_label_near_zero": 0.9243375174337517,
+    "off_label_median": 0.01567051373422146,
+    "cars": 74,
+    "label_agreement": 0.18691254627599996,
+    "label_within_2": 0.6756756756756757
+   },
+   {
+    "seq": "20210401-074958-00.01.30-00.01.45@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 3360,
+    "off_label_near_zero": 0.9011904761904762,
+    "off_label_median": 0.04287806525826454,
+    "cars": 127,
+    "label_agreement": 26.29926203222854,
+    "label_within_2": 0.2283464566929134
+   },
+   {
+    "seq": "20210401-074958-00.01.45-00.02.00@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 1848,
+    "off_label_near_zero": 0.91504329004329,
+    "off_label_median": 0.047331951558589935,
+    "cars": 82,
+    "label_agreement": 0.05463121431567863,
+    "label_within_2": 0.6341463414634146
+   },
+   {
+    "seq": "20210401-081346-00.01.00-00.01.15@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 1205,
+    "off_label_near_zero": 0.9294605809128631,
+    "off_label_median": 0.0496436171233654,
+    "cars": 24,
+    "label_agreement": 0.205179852753254,
+    "label_within_2": 0.7083333333333334
+   },
+   {
+    "seq": "20210401-081346-00.01.15-00.01.30@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 3282,
+    "off_label_near_zero": 0.8991468616697136,
+    "off_label_median": -0.001357436180114746,
+    "cars": 58,
+    "label_agreement": 0.12095563044213975,
+    "label_within_2": 0.603448275862069
+   },
+   {
+    "seq": "20210401-081346-00.01.30-00.01.45@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 5594,
+    "off_label_near_zero": 0.914193779048981,
+    "off_label_median": 0.057269491255283356,
+    "cars": 32,
+    "label_agreement": 0.17101201895486184,
+    "label_within_2": 0.75
+   },
+   {
+    "seq": "20210401-085844-00.01.00-00.01.15@Jarvis",
+    "odd": "highway",
+    "off_label_returns": 3808,
+    "off_label_near_zero": 0.90625,
+    "off_label_median": 0.03988374397158623,
+    "cars": 0,
+    "label_agreement": null,
+    "label_within_2": null
+   },
+   {
+    "seq": "20210728-063719-00.08.00-00.08.15@Yoda",
+    "odd": "urban",
+    "off_label_returns": 3045,
+    "off_label_near_zero": 0.9064039408866995,
+    "off_label_median": -0.028945468366146088,
+    "cars": 766,
+    "label_agreement": 0.06409049327587368,
+    "label_within_2": 0.8485639686684073
+   },
+   {
+    "seq": "20210728-063719-00.08.15-00.08.30@Yoda",
+    "odd": "urban",
+    "off_label_returns": 1962,
+    "off_label_near_zero": 0.9148827726809379,
+    "off_label_median": -0.01337340660393238,
+    "cars": 565,
+    "label_agreement": 0.0490478553043765,
+    "label_within_2": 0.9433628318584071
+   },
+   {
+    "seq": "20210728-063719-00.08.30-00.08.45@Yoda",
+    "odd": "urban",
+    "off_label_returns": 2454,
+    "off_label_near_zero": 0.9099429502852485,
+    "off_label_median": -0.07731132209300995,
+    "cars": 676,
+    "label_agreement": 0.25091966114127384,
+    "label_within_2": 0.7928994082840237
+   },
+   {
+    "seq": "20210728-063719-00.08.45-00.09.00@Yoda",
+    "odd": "urban",
+    "off_label_returns": 2586,
+    "off_label_near_zero": 0.9033255993812839,
+    "off_label_median": 0.0007345268968492746,
+    "cars": 300,
+    "label_agreement": 0.34739848085295044,
+    "label_within_2": 0.6266666666666667
+   },
+   {
+    "seq": "20210728-063719-00.09.00-00.09.15@Yoda",
+    "odd": "urban",
+    "off_label_returns": 2762,
+    "off_label_near_zero": 0.9341057204923968,
+    "off_label_median": 0.09771724045276642,
+    "cars": 431,
+    "label_agreement": 0.25126478247480577,
+    "label_within_2": 0.7146171693735499
+   },
+   {
+    "seq": "20210728-063719-00.09.15-00.09.30@Yoda",
+    "odd": "urban",
+    "off_label_returns": 4122,
+    "off_label_near_zero": 0.9255215914604561,
+    "off_label_median": 0.03922262787818909,
+    "cars": 191,
+    "label_agreement": 0.18393009961081574,
+    "label_within_2": 0.743455497382199
+   },
+   {
+    "seq": "20210728-063719-00.09.30-00.09.45@Yoda",
+    "odd": "urban",
+    "off_label_returns": 3115,
+    "off_label_near_zero": 0.9447833065810594,
+    "off_label_median": 0.007778954692184925,
+    "cars": 156,
+    "label_agreement": 0.16702462402055396,
+    "label_within_2": 0.7243589743589743
+   },
+   {
+    "seq": "20210728-063719-00.09.45-00.10.00@Yoda",
+    "odd": "urban",
+    "off_label_returns": 2577,
+    "off_label_near_zero": 0.93325572370974,
+    "off_label_median": -0.0497257299721241,
+    "cars": 426,
+    "label_agreement": 0.14263876198206146,
+    "label_within_2": 0.9131455399061033
+   },
+   {
+    "seq": "20210728-063719-00.10.00-00.10.15@Yoda",
+    "odd": "urban",
+    "off_label_returns": 1099,
+    "off_label_near_zero": 0.9426751592356688,
+    "off_label_median": -0.1252906769514084,
+    "cars": 252,
+    "label_agreement": 0.21439360604900332,
+    "label_within_2": 0.9166666666666666
+   }
+  ]
+ },
+ "cars": {
+  "holdout": {
+   "0-30": {
+    "M1": {
+     "cars": 304,
+     "with_return": 0.4605263157894737,
+     "mean_returns": 0.555921052631579
+    },
+    "M3": {
+     "cars": 304,
+     "with_return": 0.5164473684210527,
+     "mean_returns": 1.381578947368421
+    }
+   },
+   "30-50": {
+    "M1": {
+     "cars": 343,
+     "with_return": 0.47230320699708456,
+     "mean_returns": 0.6297376093294461
+    },
+    "M3": {
+     "cars": 343,
+     "with_return": 0.5131195335276968,
+     "mean_returns": 1.5597667638483965
+    }
+   },
+   "50-100": {
+    "M1": {
+     "cars": 508,
+     "with_return": 0.421259842519685,
+     "mean_returns": 0.6200787401574803
+    },
+    "M3": {
+     "cars": 508,
+     "with_return": 0.5078740157480315,
+     "mean_returns": 1.5688976377952757
+    }
+   },
+   "100-200": {
+    "M1": {
+     "cars": 95,
+     "with_return": 0.4631578947368421,
+     "mean_returns": 0.5894736842105263
+    },
+    "M3": {
+     "cars": 95,
+     "with_return": 0.5263157894736842,
+     "mean_returns": 1.4842105263157894
+    }
+   }
+  },
+  "val": {
+   "0-30": {
+    "M1": {
+     "cars": 498,
+     "with_return": 0.4919678714859438,
+     "mean_returns": 0.5763052208835341
+    },
+    "M3": {
+     "cars": 498,
+     "with_return": 0.5281124497991968,
+     "mean_returns": 1.1566265060240963
+    }
+   },
+   "30-50": {
+    "M1": {
+     "cars": 298,
+     "with_return": 0.5939597315436241,
+     "mean_returns": 0.8993288590604027
+    },
+    "M3": {
+     "cars": 298,
+     "with_return": 0.6174496644295302,
+     "mean_returns": 2.077181208053691
+    }
+   },
+   "50-100": {
+    "M1": {
+     "cars": 1373,
+     "with_return": 0.5396941005098325,
+     "mean_returns": 0.7545520757465404
+    },
+    "M3": {
+     "cars": 1373,
+     "with_return": 0.6052439912600146,
+     "mean_returns": 1.8557902403495994
+    }
+   },
+   "100-200": {
+    "M1": {
+     "cars": 1366,
+     "with_return": 0.48975109809663253,
+     "mean_returns": 0.7079062957540263
+    },
+    "M3": {
+     "cars": 1366,
+     "with_return": 0.6017569546120058,
+     "mean_returns": 1.8755490483162518
+    }
+   }
+  }
+ },
+ "gate": {
+  "delta0": 0.5,
+  "kappa": 0.02
+ }
+}

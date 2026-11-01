@@ -10,3 +10,5 @@ export NUMBAPRO_LIBDEVICE=$CUDA_HOME/nvvm/libdevice
 export PYTHONPATH=$HOME/Documents/CLOCs:$PYTHONPATH
 # numba 0.56 binds the wrong cuCtxGetDevice_v2 symbol on CUDA 13 drivers; use NVIDIA's cuda-python binding instead
 export NUMBA_CUDA_USE_NVIDIA_BINDING=1
+# OpenPCDet is used from its source tree (see clocs_r/install_detectors.sh)
+export PYTHONPATH=$HOME/OpenPCDet:$PYTHONPATH
