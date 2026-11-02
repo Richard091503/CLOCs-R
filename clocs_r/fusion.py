@@ -9,17 +9,28 @@ MISSING = -1.0  # IoU and 2D score of the reserved no-camera row, as stated in t
 class FusionNet(nn.Module):
     """Four 1x1 convolutions, (4+m) -> 18 -> 36 -> 36 -> 1, the same layers as the CLOCs fuse_2d_3d block."""
 
-    def __init__(self, num_radar=0):
+    def __init__(self, num_radar=0, residual=False, logit_input=False):
+        """residual: the output is added to the 3D logit, starting from zero. logit_input: the 3D score enters as a scaled logit."""
         super().__init__()
+        self.residual, self.logit_input = residual, logit_input
         self.net = nn.Sequential(nn.Conv2d(4 + num_radar, 18, 1), nn.ReLU(), nn.Conv2d(18, 36, 1), nn.ReLU(),
                                  nn.Conv2d(36, 36, 1), nn.ReLU(), nn.Conv2d(36, 1, 1))
+        if residual:
+            nn.init.zeros_(self.net[-1].weight)
+            nn.init.zeros_(self.net[-1].bias)
 
     def forward(self, cells, column, n):
         """cells: (P, 4+m) non-empty cells; column: (P,) candidate index of each cell; n: candidates in the frame.
 
         Returns (n,) logits: the max over each candidate's cells (Eq. 4).
         """
+        if self.residual or self.logit_input:
+            z = torch.logit(cells[:, 2].clamp(1e-6, 1 - 1e-6))
+        if self.logit_input:
+            cells = torch.cat([cells[:, :2], z[:, None] / 5, cells[:, 3:]], 1)
         x = self.net(cells.t()[None, :, None, :])[0, 0, 0]
+        if self.residual:
+            x = x + z
         return _max_by_column(x, column, n)
 
 

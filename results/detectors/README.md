@@ -132,6 +132,7 @@ At long range, LiDAR coverage is the main limit. On holdout, 49% of cars at 100-
 
 ## Notes for the paper
 
+- **Comparing with KITTI:** limit aiMotive to KITTI's range when comparing overall scores. Over 0-70.4 m, SECOND's APBEV@0.3 on aiMotive val is 0.867, against 0.929 on KITTI and 0.630 for aiMotive's full range. aiMotive matches or beats KITTI at 0-30 m (0.975 vs 0.973) and 50-70.4 m (0.738 vs 0.481), and is slightly behind at 30-50 m (0.847 vs 0.867). Its lower 0-70.4 m score comes from the distance mix: 47% of its cars in that range are at 50-70.4 m, against 9% on KITTI ([`diag_kitti_range.json`](diag_kitti_range.json)).
 - **Metrics:** lead with APBEV@0.3 and center-distance AP on aiMotive, and still report AP3D with the label-shift explanation above.
 - **Detectors stay frozen:** the decision not to retrain was made on holdout, before val was run. Both detectors have now been scored on val, so any retrain from here would have to be disclosed.
 - **KITTI Cascade R-CNN:** these numbers come from the CLOCs authors' saved detections, because their weights are not available.

@@ -64,10 +64,10 @@ def base_item(seq, frame, cand3d, cand2d):
                 seq=seq.name, odd=seq.odd, frame=frame)
 
 
-def radar_item(seq, frame, cand3d, delta0, kappa, sweeps):
+def radar_item(seq, frame, cand3d, delta0, kappa, sweeps, motion=False):
     with np.load(pathlib.Path(cand3d) / seq.name / f"{frame:07d}.npz") as z:
         boxes = z["boxes"]
-    pts, vel = seq.radar_accumulated(frame, sweeps)
+    pts, vel = seq.radar_accumulated(frame, sweeps, motion)
     return radar_features.candidate_features(boxes, pts, vel, delta0, kappa)
 
 
@@ -76,7 +76,7 @@ def _work(job):
     seq = _seq(seq_path)
     if kind == "base":
         return base_item(seq, frame, a["cand3d"], a["cand2d"])
-    return radar_item(seq, frame, a["cand3d"], a["delta0"], a["kappa"], a["sweeps"])
+    return radar_item(seq, frame, a["cand3d"], a["delta0"], a["kappa"], a["sweeps"], a["motion"])
 
 
 _SEQS = {}
@@ -89,24 +89,24 @@ def _seq(path):
     return _SEQS[path]
 
 
-def radar_name(delta0, kappa, sweeps):
-    return f"radar_d{delta0}_k{kappa}_m{sweeps}"
+def radar_name(delta0, kappa, sweeps, motion=False):
+    return f"radar_d{delta0}_k{kappa}_m{sweeps}" + ("_motion" if motion else "")
 
 
-def build(split, out, cand3d, cand2d, delta0, kappa, sweeps, limit=0, workers=14, use_radar=True):
+def build(split, out, cand3d, cand2d, delta0, kappa, sweeps, limit=0, workers=14, use_radar=True, motion=False):
     out = pathlib.Path(out)
     out.mkdir(parents=True, exist_ok=True)
     items = [(seq.path, f) for seq, f in splits.frames(split)]
     if limit:
         items = items[:: max(1, len(items) // limit)][:limit]
     base_path = out / f"{split}_base.pkl"
-    a = dict(cand3d=cand3d, cand2d=cand2d, delta0=delta0, kappa=kappa, sweeps=sweeps)
+    a = dict(cand3d=cand3d, cand2d=cand2d, delta0=delta0, kappa=kappa, sweeps=sweeps, motion=motion)
     with mp.Pool(workers) as pool:
         if not base_path.exists():
             base = pool.map(_work, [("base", s, f, a) for s, f in items], chunksize=16)
             with open(base_path, "wb") as fp:
                 pickle.dump(base, fp, protocol=4)
-        rad_path = out / f"{split}_{radar_name(delta0, kappa, sweeps)}.pkl"
+        rad_path = out / f"{split}_{radar_name(delta0, kappa, sweeps, motion)}.pkl"
         if use_radar and not rad_path.exists():
             radar = pool.map(_work, [("radar", s, f, a) for s, f in items], chunksize=16)
             with open(rad_path, "wb") as fp:
@@ -122,8 +122,8 @@ def load(split, out, delta0, kappa, sweeps, use_radar=True):
     return base, load_radar(split, out, delta0, kappa, sweeps)
 
 
-def load_radar(split, out, delta0, kappa, sweeps):
-    with open(pathlib.Path(out) / f"{split}_{radar_name(delta0, kappa, sweeps)}.pkl", "rb") as fp:
+def load_radar(split, out, delta0, kappa, sweeps, motion=False):
+    with open(pathlib.Path(out) / f"{split}_{radar_name(delta0, kappa, sweeps, motion)}.pkl", "rb") as fp:
         return pickle.load(fp)
 
 

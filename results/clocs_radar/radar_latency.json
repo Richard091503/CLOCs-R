@@ -1,9 +1,0 @@
-{
- "delta0": 0.5,
- "kappa": 0.02,
- "sweeps": 3,
- "frames": 537,
- "out": "results/clocs_radar/radar_latency.json",
- "median_ms": 64.76119299622951,
- "p95_ms": 105.91412240464705
-}

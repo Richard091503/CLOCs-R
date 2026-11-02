@@ -101,20 +101,36 @@ class Sequence:
         n = p[:, :2] / np.maximum(np.linalg.norm(p[:, :2], axis=1, keepdims=True), 1e-3)
         return p.astype(np.float32), (rad["speed"][a:b] + n @ u).astype(np.float32)
 
-    def radar_accumulated(self, frame, m=3):
-        """Returns from the last m sweeps, moved into this frame's body coordinates using the ego poses."""
+    def radar_accumulated(self, frame, m=3, motion=False):
+        """Returns from the last m sweeps, moved into this frame's body coordinates using the ego poses.
+
+        motion: also move each older return along its line of sight by its Doppler speed times its age.
+        """
+        return self._accumulate(frame, m, motion)[:2]
+
+    def _accumulate(self, frame, m, motion):
         poses = self.meta["poses"]
-        pts, vel = [], []
+        pts, vel, rcs = [], [], []
         for f in range(frame, frame - m, -1):
             p, v = self.radar_sweep(f)
             if len(p) and f != frame:
                 if f not in poses or frame not in poses:
                     continue
+                if motion:
+                    p = p.copy()
+                    sight = p[:, :2] / np.maximum(np.linalg.norm(p[:, :2], axis=1, keepdims=True), 1e-3)
+                    p[:, :2] += sight * (v * (frame - f) * self.frame_period)[:, None]
                 T = np.linalg.inv(poses[frame]) @ poses[f]
                 p = p @ T[:3, :3].T + T[:3, 3]
             pts.append(p)
             vel.append(v)
-        return np.concatenate(pts).astype(np.float32), np.concatenate(vel).astype(np.float32)
+            if len(p):
+                i = self.radar["index"][f]
+                rcs.append(self.radar["rcs"][self.radar["offsets"][i]:self.radar["offsets"][i + 1]])
+        return np.concatenate(pts).astype(np.float32), np.concatenate(vel).astype(np.float32), np.concatenate(rcs).astype(np.float32) if rcs else np.zeros(0, np.float32)
+
+    def radar_accumulated_rcs(self, frame, m=3, motion=False):
+        return self._accumulate(frame, m, motion)
 
 
 def list_sequences(root=DEFAULT_ROOT, split=None, odds=None):

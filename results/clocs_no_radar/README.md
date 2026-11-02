@@ -44,6 +44,8 @@ Recall is at BEV IoU 0.3. On aiMotive, AP3D@0.7 is limited by the train and val 
 
 The two datasets differ in sensors, labels and range, so compare the gain from fusion within each dataset rather than absolute scores across them.
 
+Over KITTI's own range, 50-70.4 m on aiMotive val, CLOCs still loses (BEV AP@0.3 0.738 to 0.704), while on KITTI it gains (0.481 to 0.622). So the different result is not only about the extra range to 200 m.
+
 ### By driving condition (CLOCs mean of 3 seeds)
 
 | | APBEV@0.3, all: SECOND | CLOCs | APBEV@0.3, 100-200 m: SECOND | CLOCs |

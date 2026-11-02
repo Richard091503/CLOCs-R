@@ -95,7 +95,7 @@ MODEL:
 
 OPTIMIZATION:
     BATCH_SIZE_PER_GPU: 4
-    NUM_EPOCHS: 20
+    NUM_EPOCHS: 40  # the run passed --epochs 40; the base config says 20
     OPTIMIZER: adam_onecycle
     LR: 0.003
     WEIGHT_DECAY: 0.01

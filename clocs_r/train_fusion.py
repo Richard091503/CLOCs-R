@@ -10,7 +10,9 @@ import time
 import numpy as np
 import torch
 
-from clocs_r import cache_cells, fusion, metrics, radar_features, splits
+from clocs_r import aimotive, cache_cells, fusion, metrics, radar_features, splits
+
+FAR = (50, 200)  # the 50-100 m and 100-200 m bins scored together, for the selection metric of Section II-C
 
 
 def frame_cells(item, radar, names_idx, device, nocam=False):
@@ -51,18 +53,18 @@ def predict(net, base, radar, names_idx, device, nocam=False, nms_thresh=0.1, sc
 def evaluate(net, base, radar, names_idx, device, nocam=False):
     """Metrics by distance bin, overall and for each driving condition."""
     records = [(it["gt"], b, s, it["odd"], it["seq"]) for it, b, s in predict(net, base, radar, names_idx, device, nocam)]
-    out = {"overall": metrics.evaluate([r[:3] for r in records])}
+    out = {"overall": metrics.evaluate([r[:3] for r in records], bins=aimotive.DIST_BINS + [FAR])}
     for odd in sorted({r[3] for r in records}):
         out[odd] = metrics.evaluate([r[:3] for r in records if r[3] == odd])
     out["no_tunnels"] = metrics.evaluate([r[:3] for r in records if r[4] not in splits.TUNNEL_SCENES])
     return out
 
 
-def fit(train, train_radar, names_idx, epochs, seed, device, label=""):
+def fit(train, train_radar, names_idx, epochs, seed, device, label="", net_kwargs=None):
     """Train a fusion network on cached frames. Returns the network and its loss log."""
     torch.manual_seed(seed)
     rng = np.random.RandomState(seed)
-    net = fusion.FusionNet(len(names_idx)).to(device)
+    net = fusion.FusionNet(len(names_idx), **(net_kwargs or {})).to(device)
     optim = torch.optim.AdamW(net.parameters(), lr=3e-4, weight_decay=0.01)
     steps = epochs * len(train)
     sched = torch.optim.lr_scheduler.OneCycleLR(optim, max_lr=3e-3, total_steps=steps, pct_start=0.4, div_factor=10,

@@ -1,6 +1,8 @@
 # CLOCs-R: adding radar on aiMotive
 
-Radar added to CLOCs using feature set R3 (support and Doppler speed), the pair the paper proposes, compared with SECOND alone and CLOCs without radar (R0). Run on 2026-11-01. The other feature sets and the camera-removed test belong to the ablation, which has not been run.
+Radar added to CLOCs using feature set R3 (support and Doppler speed), the pair the paper proposes, compared with SECOND alone and CLOCs without radar (R0). Run on 2026-11-01. The other feature sets and the camera-removed test are in the [ablation](ablation/README.md), where R2 is the set selected under the paper's rule.
+
+The later [tuning](tuning/README.md) improves on these results, with disclosure that it came after val was seen.
 
 ## Main results
 
@@ -127,9 +129,7 @@ Eq. 1 was checked on all 143 sequences with two tests: returns far from any labe
 | Gate | δ0 = 0.5 m, κ = 0.02 |
 | Training | The same network, schedule and seeds as R0, 3 epochs on 7,753 frames. Final loss about 0.084, against about 0.093 for R0 |
 | Fusion forward pass | 1.16 ms per frame (median) |
-| Radar features | 64.8 ms per frame (median), 105.9 ms at the 95th percentile, on one CPU thread |
-
-The radar feature time is an upper bound for R3. The code computes all five features in a Python loop over about 550 candidates with a return per frame, and has not been optimized. Accumulating sweeps takes 0.3 ms of this. The detectors are not included.
+| Radar features | 18.0 ms per frame (median), 28.2 ms at the 95th percentile, on one CPU thread, excluding the detectors. Timing for every set is in the [ablation](ablation/README.md#latency) |
 
 GPU training is not bit-identical between runs, so holdout numbers can differ slightly between the selection run and the final run.
 
@@ -146,7 +146,7 @@ GPU training is not bit-identical between runs, so holdout numbers can differ sl
 - `diag_radar.py/json`: radar data checks
 - `diag_radar_signal.py/json`: signal and score-change tables
 - `diag_radar_limits.py/json`: training examples, information test, and selection metric by seed and scene
-- `radar_latency.json`: radar feature timing
+- `ablation/`: every feature set, the camera-removed test and per-set latency
 
 ## Reproducing
 
@@ -156,7 +156,7 @@ python results/clocs_radar/diag_radar.py
 python -m clocs_r.select_gate --out results/clocs_radar/gate_selection.json
 python -m clocs_r.cache_cells --split val,holdout,train --delta0 0.5 --kappa 0.02
 for s in 1 2 3; do python -m clocs_r.train_fusion --feature_set R3 --delta0 0.5 --kappa 0.02 --out runs/fusion/R3_s$s --seed $s --eval_splits holdout,val; done
-python -m clocs_r.radar_latency --delta0 0.5 --kappa 0.02 --out results/clocs_radar/radar_latency.json
+python -m clocs_r.radar_latency --delta0 0.5 --kappa 0.02 --out results/clocs_radar/ablation/latency.json
 python results/clocs_radar/diag_radar_signal.py
 python results/clocs_radar/diag_radar_limits.py
 ```

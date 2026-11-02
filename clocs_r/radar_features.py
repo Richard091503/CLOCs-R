@@ -2,6 +2,7 @@
 import numpy as np
 
 V_MAX = 40.0  # m/s; scales Doppler features to about [0, 1]
+RCS_LOG_RANGE = (-1.0, 3.5)  # log10 of the RCS reported by the radar; about the 0.1st and 99.9th percentiles
 FEATURES = ("r", "v", "e", "delta", "o")
 # Table II of the paper. R0 is camera-LiDAR CLOCs with no radar channels.
 FEATURE_SETS = {
@@ -10,8 +11,8 @@ FEATURE_SETS = {
 }
 
 
-def candidate_features(boxes, pts, vel, delta0=0.5, kappa=0.02):
-    """All five features for every candidate: (N, 5) in FEATURES order.
+def candidate_features(boxes, pts, vel, delta0=0.5, kappa=0.02, names=FEATURES):
+    """The chosen features for every candidate: (N, 5) in FEATURES order, with the others left at their missing value.
 
     boxes: (N, 7) [x, y, z, l, w, h, yaw] in the body frame; pts, vel: accumulated radar returns.
     With no return in the gate, r = 0 and the other features are -1, marking missing evidence.
@@ -32,17 +33,40 @@ def candidate_features(boxes, pts, vel, delta0=0.5, kappa=0.02):
     hit = np.nonzero(gate.any(1))[0]
     if len(hit) == 0:
         return out
-    q_range = np.hypot(pts[:, 0], pts[:, 1])
-    dist = np.hypot(dx, dy)
-    for j in hit:
+    if "r" in names:
+        out[hit, 0] = np.log1p(gate[hit].sum(1))
+    if "delta" in names:
+        q_range = np.hypot(pts[:, 0], pts[:, 1])
+    if "o" in names:
+        dist = np.hypot(dx, dy)
+    for j in hit if set(names) - {"r"} else ():
         q = gate[j]
-        v = vel[q]
-        vbar = np.median(v)
-        out[j] = (np.log1p(q.sum()),
-                  np.median(np.abs(v)) / V_MAX,
-                  np.median(np.abs(v - vbar)) / V_MAX,
-                  abs(np.median(q_range[q]) - rho[j]) / delta[j],
-                  dist[j][q].min() / delta[j])
+        if "v" in names or "e" in names:
+            v = vel[q]
+        if "v" in names:
+            out[j, 1] = np.median(np.abs(v)) / V_MAX
+        if "e" in names:
+            out[j, 2] = np.median(np.abs(v - np.median(v))) / V_MAX
+        if "delta" in names:
+            out[j, 3] = abs(np.median(q_range[q]) - rho[j]) / delta[j]
+        if "o" in names:
+            out[j, 4] = dist[j][q].min() / delta[j]
+    return out
+
+
+def candidate_rcs(boxes, pts, rcs, delta0=0.5, kappa=0.02):
+    """Median radar cross-section of each candidate's gated returns, on a log scale of about [0, 1], or -1 with no return: (N,)."""
+    out = np.full(len(boxes), -1.0, dtype=np.float32)
+    if len(boxes) == 0 or len(pts) == 0:
+        return out
+    delta = delta0 + kappa * np.hypot(boxes[:, 0], boxes[:, 1])
+    c, s = np.cos(boxes[:, 6]), np.sin(boxes[:, 6])
+    dx = pts[None, :, 0] - boxes[:, None, 0]
+    dy = pts[None, :, 1] - boxes[:, None, 1]
+    gate = (np.abs(dx * c[:, None] + dy * s[:, None]) <= boxes[:, None, 3] / 2 + delta[:, None]) & \
+           (np.abs(-dx * s[:, None] + dy * c[:, None]) <= boxes[:, None, 4] / 2 + delta[:, None])
+    for j in np.nonzero(gate.any(1))[0]:
+        out[j] = (np.log10(max(np.median(rcs[gate[j]]), 10 ** RCS_LOG_RANGE[0])) - RCS_LOG_RANGE[0]) / (RCS_LOG_RANGE[1] - RCS_LOG_RANGE[0])
     return out
 
 

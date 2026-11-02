@@ -1,0 +1,58 @@
+{
+ "delta0": 0.5,
+ "kappa": 0.02,
+ "sweeps": 3,
+ "frames": 537,
+ "sets": {
+  "R0": {
+   "features_median_ms": 0.000590996933169663,
+   "features_p95_ms": 0.0008412112947553396,
+   "fusion_median_ms": 1.4723539352416992,
+   "params": 2143
+  },
+  "R1": {
+   "features_median_ms": 3.683389993966557,
+   "features_p95_ms": 5.766125596710481,
+   "fusion_median_ms": 1.1589527130126953,
+   "params": 2161
+  },
+  "R2": {
+   "features_median_ms": 17.920091006089933,
+   "features_p95_ms": 28.01254740334116,
+   "fusion_median_ms": 1.1142492294311523,
+   "params": 2161
+  },
+  "R3": {
+   "features_median_ms": 18.0000209948048,
+   "features_p95_ms": 28.217140794731677,
+   "fusion_median_ms": 1.150965690612793,
+   "params": 2179
+  },
+  "R4": {
+   "features_median_ms": 43.6299660068471,
+   "features_p95_ms": 72.13708079070784,
+   "fusion_median_ms": 1.1588335037231445,
+   "params": 2197
+  },
+  "R5": {
+   "features_median_ms": 20.375104999402538,
+   "features_p95_ms": 31.281666591530666,
+   "fusion_median_ms": 1.1180639266967773,
+   "params": 2197
+  },
+  "R6": {
+   "features_median_ms": 30.88506498897914,
+   "features_p95_ms": 49.98873059521429,
+   "fusion_median_ms": 1.1178255081176758,
+   "params": 2197
+  },
+  "R7": {
+   "features_median_ms": 60.97778500407003,
+   "features_p95_ms": 99.54211520089301,
+   "fusion_median_ms": 1.1527538299560547,
+   "params": 2233
+  }
+ },
+ "fusion_dir": "runs/fusion",
+ "out": "results/clocs_radar/ablation/latency.json"
+}

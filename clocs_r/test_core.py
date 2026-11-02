@@ -42,11 +42,16 @@ def main():
     # Ego velocity: 2 m per frame at 0.1 s per frame is 20 m/s, also for a frame whose neighbors have poses but no timestamps
     seq = object.__new__(aimotive.Sequence)
     seq._period = None
-    poses = {f: np.eye(4) for f in range(6)}
-    for f in poses:
-        poses[f][0, 3] = 2.0 * f
-    seq.meta = dict(poses=poses, times={f: 0.1 * f for f in range(6) if f not in (2, 3)})
+    poses = {i: np.eye(4) for i in range(6)}
+    for i in poses:
+        poses[i][0, 3] = 2.0 * i
+    seq.meta = dict(poses=poses, times={i: 0.1 * i for i in range(6) if i not in (2, 3)})
     assert abs(seq.ego_velocity(1)[0] - 20) < 1e-6 and abs(seq.ego_velocity(3)[0] - 20) < 1e-6
+    # Computing a subset of the features gives the same values as computing all five
+    for names in ([("r",), ("v",), ("r", "v"), ("r", "v", "e"), ("r", "delta", "o")]):
+        part = rf.candidate_features(cand, pts, vel, names=names)
+        for k, name in enumerate(rf.FEATURES):
+            assert np.array_equal(part[:, k], f[:, k]) or name not in names
     # Table II channel counts
     channels = {k: 4 + len(v) for k, v in rf.FEATURE_SETS.items()}
     assert channels == dict(R0=4, R1=5, R2=5, R3=6, R4=7, R5=7, R6=7, R7=9)
@@ -77,6 +82,21 @@ def main():
         expected = np.full(2000, -1e6, dtype=np.float32)
         np.maximum.at(expected, column.cpu().numpy(), x.cpu().numpy())
         assert np.array_equal(fusion._max_by_column(x, column, 2000).cpu().numpy(), expected)
+
+    # Residual mode starts exactly at the 3D score, and takes the same cells as the plain network
+    residual = fusion.FusionNet(1, residual=True)
+    start = torch.sigmoid(residual(torch.from_numpy(cells), torch.from_numpy(col), 2))
+    assert torch.allclose(start, torch.tensor([0.3, 0.2]), atol=1e-5)
+    assert fusion.FusionNet(1, logit_input=True)(torch.from_numpy(cells), torch.from_numpy(col), 2).shape == (2,)
+    # Doppler motion: a target closing at 15 m/s, seen 2 frames ago, moves 2 frames of closing nearer along its line of sight
+    seq = object.__new__(aimotive.Sequence)
+    seq._period, seq._radar = 0.1, dict(index={8: 0, 10: 1}, offsets=np.array([0, 1, 2]), rcs=np.array([5.0, 6.0]), frames=np.array([8, 10]),
+                                        range=np.array([100.0, 97.0]), azimuth=np.zeros(2), elevation=np.zeros(2), speed=np.array([-15.0, -15.0]))
+    seq.body_from_radar = np.eye(4)
+    seq.meta = dict(poses={i: np.eye(4) for i in range(7, 12)}, times={i: 0.1 * i for i in range(7, 12)})
+    pts, vel, rcs = seq.radar_accumulated_rcs(10, 3, motion=True)
+    assert abs(pts[0, 0] - 97) < 1e-4 and abs(pts[1, 0] - 97) < 1e-4 and list(rcs) == [6.0, 5.0]
+    assert abs(seq.radar_accumulated(10, 3)[0][1, 0] - 100) < 1e-4
 
     # Metrics: a perfect detection and a 4 m miss, in different bins
     gt = np.array([box(20, 0), box(120, 0)], dtype=np.float32)
