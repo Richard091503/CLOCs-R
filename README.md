@@ -1,3 +1,40 @@
+## CLOCs-R on the full aiMotive dataset (all conditions, range-focused)
+
+CLOCs (camera-LiDAR) and CLOCs-R (camera-LiDAR-radar) trained and compared on every annotated frame of aiMotive, including night and rain, with training focused on cars beyond 50 m.
+
+- [**Results and analysis**](results/full_dataset/README.md): final CLOCs-R (R2+T2) and CLOCs (R0+T2); how much radar adds, by driving condition and distance.
+- [**What was done**](results/full_dataset/METHODS.md): environment, data, code changes, pipeline.
+- [**The dataset**](results/full_dataset/DATASET.md): where the vehicles are, and what each sensor sees of those beyond 50 m.
+- [**Ablation**](results/full_dataset/ablation/README.md): gate, feature sets and fusion changes, which set the final configurations ([plan](results/full_dataset/ablation/PLAN.md)).
+- [**Example frames**](results/full_dataset/EXAMPLES.md): successes and failures, with camera, LiDAR and radar views.
+- [**Protocol**](results/full_dataset/PLAN.md): written before any result was seen, plus a dated addendum.
+- **Loss curves:** `python results/full_dataset/plot_losses.py` → `results/full_dataset/figures/loss_{second,cascade,fusion}.png`.
+
+```bash
+bash clocs_r/install_detectors.sh            # conda env `clocs` (PyTorch 2.0.1 + CUDA 11.8), OpenPCDet, MMDetection
+source env.sh                                # every later command assumes this
+python -m clocs_r.fetch_aimotive --src ~/datasets/aimotive --out ~/datasets/aimotive_clocs --train_stride 1   # extracted dataset -> reduced format
+nohup setsid python -m clocs_r.train_second --out runs/second > runs/second/console.log 2>&1 &              # SECOND, 40 epochs, range-weighted
+nohup setsid python -m clocs_r.cascade_2d train --out runs/cascade --epochs 4 > runs/cascade/console.log 2>&1 &   # Cascade R-CNN, 1.5x images
+nohup setsid bash clocs_r/run_full.sh > runs/run_full.log 2>&1 &   # waits for both, then candidates, fusion selection on holdout, val
+python -m clocs_r.progress                   # status of every job
+python results/full_dataset/per_scene.py && python results/full_dataset/make_report.py   # tables and figure
+# CLOCs-R with radar points + Doppler (R3+T2): 3 more seeds for it, its twin and R2+T2, then the 6-seed report
+python -m clocs_r.tune_fusion --configs R3+T2,R0+T2 --far_weight 2 --seeds 4,5,6 --splits holdout,val --out results/full_dataset/rerun_r3.json --weights runs/fusion_full
+python -m clocs_r.tune_fusion --configs R2+T2 --far_weight 2 --seeds 4,5,6 --splits holdout,val --out results/full_dataset/rerun_r2.json --weights runs/fusion_full
+python results/full_dataset/per_scene.py --models R3+T2,R2+T2,R0+T2 --seeds 1,2,3,4,5,6 --suffix _r3
+python results/full_dataset/make_report.py --model R3+T2 --twin R0+T2 --extra rerun_r3.json,rerun_r2.json --suffix _r3
+python results/full_dataset/dataset_stats.py  # dataset analysis
+python -m clocs_r.ablation_full               # the full ablation; sets the final configurations (about 6 h)
+python results/full_dataset/ablation/make_tables.py
+python results/full_dataset/per_scene.py --models R2+T2,R0+T2 --seeds 1,2,3,4,5,6 --weights runs/ablation/sets_d0.5_k0.02 --suffix _final
+python results/full_dataset/make_report.py --model R2+T2 --twin R0+T2 --extra rerun_r2.json,rerun_r3.json --selected '' --suffix _final
+python results/full_dataset/plot_losses.py    # loss curves
+python results/full_dataset/examples.py       # example frames of successes and failures
+```
+
+What changed from the daytime-only results further down: all four driving conditions (`clocs_r/splits.py`, `CLOCS_ODDS` restores the old set), every training frame instead of every 2nd, range-weighted losses beyond 50 m in SECOND and fusion (`clocs_r/range_weight.py`), Cascade R-CNN on 1.5x upscaled images, and an environment for current GPUs (the RTX 4090 needs CUDA 11.8 or newer). `python -m clocs_r.train_second --resume` continues an interrupted SECOND run.
+
 ## CLOCs: Camera-LiDAR Object Candidates Fusion for 3D Object Detection
 
 CLOCs is a novel Camera-LiDAR Object Candidates fusion network. It provides a low-complexity multi-modal fusion framework that improves the performance of single-modality detectors. CLOCs operates on the combined output candidates of any 3D and any 2D detector, and is trained to produce more accurate 3D and 2D detection results.

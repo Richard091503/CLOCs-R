@@ -1,0 +1,732 @@
+{
+ "frames": {
+  "train/highway": {
+   "frames": 8924,
+   "scenes": 63
+  },
+  "train/urban": {
+   "frames": 6525,
+   "scenes": 46
+  },
+  "train/night": {
+   "frames": 3117,
+   "scenes": 22
+  },
+  "train/rain": {
+   "frames": 428,
+   "scenes": 3
+  },
+  "train/all": {
+   "frames": 18994,
+   "scenes": 134
+  },
+  "holdout/highway": {
+   "frames": 990,
+   "scenes": 7
+  },
+  "holdout/urban": {
+   "frames": 851,
+   "scenes": 6
+  },
+  "holdout/night": {
+   "frames": 425,
+   "scenes": 3
+  },
+  "holdout/rain": {
+   "frames": 142,
+   "scenes": 1
+  },
+  "holdout/all": {
+   "frames": 2408,
+   "scenes": 17
+  },
+  "val/highway": {
+   "frames": 2252,
+   "scenes": 12
+  },
+  "val/urban": {
+   "frames": 2040,
+   "scenes": 9
+  },
+  "val/night": {
+   "frames": 444,
+   "scenes": 2
+  },
+  "val/rain": {
+   "frames": 445,
+   "scenes": 2
+  },
+  "val/all": {
+   "frames": 5181,
+   "scenes": 25
+  },
+  "all/highway": {
+   "frames": 12166,
+   "scenes": 82
+  },
+  "all/urban": {
+   "frames": 9416,
+   "scenes": 61
+  },
+  "all/night": {
+   "frames": 3986,
+   "scenes": 27
+  },
+  "all/rain": {
+   "frames": 1015,
+   "scenes": 6
+  },
+  "all/all": {
+   "frames": 26583,
+   "scenes": 176
+  }
+ },
+ "objects": {
+  "BICYCLE": {
+   "all": 1466,
+   "scored": 468,
+   "scored_far": 285
+  },
+  "BUS": {
+   "all": 7740,
+   "scored": 2937,
+   "scored_far": 1336
+  },
+  "CAR": {
+   "all": 363005,
+   "scored": 127005,
+   "scored_far": 68457
+  },
+  "MOTORCYCLE": {
+   "all": 2611,
+   "scored": 823,
+   "scored_far": 252
+  },
+  "OTHER-OBJECT": {
+   "all": 558,
+   "scored": 260,
+   "scored_far": 67
+  },
+  "OTHER-RIDEABLE": {
+   "all": 515,
+   "scored": 94,
+   "scored_far": 28
+  },
+  "PEDESTRIAN": {
+   "all": 14060,
+   "scored": 5511,
+   "scored_far": 2376
+  },
+  "PICKUP": {
+   "all": 2060,
+   "scored": 889,
+   "scored_far": 693
+  },
+  "RIDER": {
+   "all": 1994,
+   "scored": 775,
+   "scored_far": 145
+  },
+  "SHOPPING-CART": {
+   "all": 406,
+   "scored": 75,
+   "scored_far": 50
+  },
+  "TRAILER": {
+   "all": 725,
+   "scored": 286,
+   "scored_far": 219
+  },
+  "TRAIN": {
+   "all": 499,
+   "scored": 49,
+   "scored_far": 31
+  },
+  "TRUCK": {
+   "all": 25024,
+   "scored": 10337,
+   "scored_far": 8012
+  },
+  "VAN": {
+   "all": 6249,
+   "scored": 3667,
+   "scored_far": 2932
+  }
+ },
+ "cars": {
+  "train/highway": {
+   "total": 23812,
+   "far": 13823,
+   "bins": {
+    "0-30": 4897,
+    "30-50": 5092,
+    "50-100": 10387,
+    "100-200": 3436
+   },
+   "far_frames": 7212
+  },
+  "train/urban": {
+   "total": 57223,
+   "far": 25687,
+   "bins": {
+    "0-30": 15151,
+    "30-50": 16321,
+    "50-100": 19801,
+    "100-200": 5886
+   },
+   "far_frames": 6141
+  },
+  "train/night": {
+   "total": 13579,
+   "far": 8643,
+   "bins": {
+    "0-30": 2085,
+    "30-50": 2833,
+    "50-100": 6409,
+    "100-200": 2234
+   },
+   "far_frames": 2879
+  },
+  "train/rain": {
+   "total": 1010,
+   "far": 772,
+   "bins": {
+    "0-30": 45,
+    "30-50": 193,
+    "50-100": 549,
+    "100-200": 223
+   },
+   "far_frames": 428
+  },
+  "train/all": {
+   "total": 95624,
+   "far": 48925,
+   "bins": {
+    "0-30": 22178,
+    "30-50": 24439,
+    "50-100": 37146,
+    "100-200": 11779
+   },
+   "far_frames": 16660
+  },
+  "holdout/highway": {
+   "total": 2984,
+   "far": 1943,
+   "bins": {
+    "0-30": 405,
+    "30-50": 632,
+    "50-100": 1482,
+    "100-200": 461
+   },
+   "far_frames": 914
+  },
+  "holdout/urban": {
+   "total": 9481,
+   "far": 4115,
+   "bins": {
+    "0-30": 2622,
+    "30-50": 2744,
+    "50-100": 3651,
+    "100-200": 464
+   },
+   "far_frames": 766
+  },
+  "holdout/night": {
+   "total": 1912,
+   "far": 727,
+   "bins": {
+    "0-30": 664,
+    "30-50": 521,
+    "50-100": 714,
+    "100-200": 13
+   },
+   "far_frames": 329
+  },
+  "holdout/rain": {
+   "total": 142,
+   "far": 0,
+   "bins": {
+    "0-30": 0,
+    "30-50": 142,
+    "50-100": 0,
+    "100-200": 0
+   },
+   "far_frames": 0
+  },
+  "holdout/all": {
+   "total": 14519,
+   "far": 6785,
+   "bins": {
+    "0-30": 3691,
+    "30-50": 4039,
+    "50-100": 5847,
+    "100-200": 938
+   },
+   "far_frames": 2009
+  },
+  "val/highway": {
+   "total": 3044,
+   "far": 2333,
+   "bins": {
+    "0-30": 361,
+    "30-50": 310,
+    "50-100": 653,
+    "100-200": 1680
+   },
+   "far_frames": 1743
+  },
+  "val/urban": {
+   "total": 14625,
+   "far": 11352,
+   "bins": {
+    "0-30": 2113,
+    "30-50": 1160,
+    "50-100": 6255,
+    "100-200": 5097
+   },
+   "far_frames": 2009
+  },
+  "val/night": {
+   "total": 1943,
+   "far": 1349,
+   "bins": {
+    "0-30": 382,
+    "30-50": 212,
+    "50-100": 630,
+    "100-200": 719
+   },
+   "far_frames": 444
+  },
+  "val/rain": {
+   "total": 1806,
+   "far": 1338,
+   "bins": {
+    "0-30": 255,
+    "30-50": 213,
+    "50-100": 610,
+    "100-200": 728
+   },
+   "far_frames": 426
+  },
+  "val/all": {
+   "total": 21418,
+   "far": 16372,
+   "bins": {
+    "0-30": 3111,
+    "30-50": 1895,
+    "50-100": 8148,
+    "100-200": 8224
+   },
+   "far_frames": 4622
+  },
+  "all/highway": {
+   "total": 29840,
+   "far": 18099,
+   "bins": {
+    "0-30": 5663,
+    "30-50": 6034,
+    "50-100": 12522,
+    "100-200": 5577
+   },
+   "far_frames": 9869
+  },
+  "all/urban": {
+   "total": 81329,
+   "far": 41154,
+   "bins": {
+    "0-30": 19886,
+    "30-50": 20225,
+    "50-100": 29707,
+    "100-200": 11447
+   },
+   "far_frames": 8916
+  },
+  "all/night": {
+   "total": 17434,
+   "far": 10719,
+   "bins": {
+    "0-30": 3131,
+    "30-50": 3566,
+    "50-100": 7753,
+    "100-200": 2966
+   },
+   "far_frames": 3652
+  },
+  "all/rain": {
+   "total": 2958,
+   "far": 2110,
+   "bins": {
+    "0-30": 300,
+    "30-50": 548,
+    "50-100": 1159,
+    "100-200": 951
+   },
+   "far_frames": 854
+  },
+  "all/all": {
+   "total": 131561,
+   "far": 72082,
+   "bins": {
+    "0-30": 28980,
+    "30-50": 30373,
+    "50-100": 51141,
+    "100-200": 20941
+   },
+   "far_frames": 23291
+  }
+ },
+ "evidence": {
+  "highway/0-30": {
+   "n": 5663,
+   "lidar_any": 0.99982341515098,
+   "lidar_5": 0.9996468303019601,
+   "lidar_median": 826.0,
+   "radar_any": 0.5793748896344694,
+   "radar_median_hit": 1.0,
+   "moving": 0.9975617189881134,
+   "height_median": 99.25946044921875,
+   "small": 0.0,
+   "no_lidar_radar": 0.0001765848490199541,
+   "none": 0.0
+  },
+  "highway/30-50": {
+   "n": 6034,
+   "lidar_any": 0.998342724560822,
+   "lidar_5": 0.997514086841233,
+   "lidar_median": 165.0,
+   "radar_any": 0.8377527345044746,
+   "radar_median_hit": 2.0,
+   "moving": 0.9823936696340257,
+   "height_median": 44.62834167480469,
+   "small": 0.003314550878355983,
+   "no_lidar_radar": 0.0008286377195889957,
+   "none": 0.0008286377195889957
+  },
+  "highway/50-100": {
+   "n": 12522,
+   "lidar_any": 0.9938508225523079,
+   "lidar_5": 0.9779587925251557,
+   "lidar_median": 38.0,
+   "radar_any": 0.8671138795719534,
+   "radar_median_hit": 2.0,
+   "moving": 0.919966844722785,
+   "height_median": 23.061935424804688,
+   "small": 0.5939945695575787,
+   "no_lidar_radar": 0.0009583133684714902,
+   "none": 0.005190864079220572
+  },
+  "highway/100-200": {
+   "n": 5577,
+   "lidar_any": 0.9447731755424064,
+   "lidar_5": 0.7629549937242245,
+   "lidar_median": 9.0,
+   "radar_any": 0.6828043751120674,
+   "radar_median_hit": 2.0,
+   "moving": 0.8067226890756303,
+   "height_median": 13.650970458984375,
+   "small": 0.97776582391967,
+   "no_lidar_radar": 0.023489331181638873,
+   "none": 0.03173749327595481
+  },
+  "highway/50-200": {
+   "n": 18099,
+   "lidar_any": 0.9787281065252224,
+   "lidar_5": 0.9117078291618321,
+   "lidar_median": 27.0,
+   "radar_any": 0.8103210122106194,
+   "radar_median_hit": 2.0,
+   "moving": 0.890563207418519,
+   "height_median": 19.581573486328125,
+   "small": 0.7122492955411901,
+   "no_lidar_radar": 0.007900989004917399,
+   "none": 0.013370904469860213
+  },
+  "urban/0-30": {
+   "n": 19886,
+   "lidar_any": 0.9946193301820376,
+   "lidar_5": 0.9919541385899628,
+   "lidar_median": 662.0,
+   "radar_any": 0.5097556069596701,
+   "radar_median_hit": 3.0,
+   "moving": 0.7912597415408898,
+   "height_median": 96.6522216796875,
+   "small": 0.0013074524791310469,
+   "no_lidar_radar": 0.0016091722820074424,
+   "none": 0.003771497535954943
+  },
+  "urban/30-50": {
+   "n": 20225,
+   "lidar_any": 0.9566872682323857,
+   "lidar_5": 0.9345364647713226,
+   "lidar_median": 99.0,
+   "radar_any": 0.5226205191594561,
+   "radar_median_hit": 3.0,
+   "moving": 0.6573320719016084,
+   "height_median": 43.427886962890625,
+   "small": 0.047317676143386896,
+   "no_lidar_radar": 0.005587144622991347,
+   "none": 0.03772558714462299
+  },
+  "urban/50-100": {
+   "n": 29707,
+   "lidar_any": 0.8330696468845726,
+   "lidar_5": 0.7213451375096779,
+   "lidar_median": 18.0,
+   "radar_any": 0.5113272965967617,
+   "radar_median_hit": 3.0,
+   "moving": 0.6418696510862409,
+   "height_median": 23.37310791015625,
+   "small": 0.5610798801629245,
+   "no_lidar_radar": 0.046352711482142255,
+   "none": 0.12057764163328509
+  },
+  "urban/100-200": {
+   "n": 11447,
+   "lidar_any": 0.5996330916397309,
+   "lidar_5": 0.36166681226522235,
+   "lidar_median": 2.0,
+   "radar_any": 0.507818642439067,
+   "radar_median_hit": 3.0,
+   "moving": 0.5088594529502839,
+   "height_median": 12.76007080078125,
+   "small": 0.9778981392504587,
+   "no_lidar_radar": 0.14457936577269154,
+   "none": 0.2557875425875775
+  },
+  "urban/50-200": {
+   "n": 41154,
+   "lidar_any": 0.7681391845264129,
+   "lidar_5": 0.6213004811196967,
+   "lidar_median": 10.0,
+   "radar_any": 0.5103513631724741,
+   "radar_median_hit": 3.0,
+   "moving": 0.6050564205113556,
+   "height_median": 19.7325439453125,
+   "small": 0.6770180298391408,
+   "no_lidar_radar": 0.07367449093648248,
+   "none": 0.15818632453710454
+  },
+  "night/0-30": {
+   "n": 3131,
+   "lidar_any": 0.9996806132226126,
+   "lidar_5": 0.9990418396678378,
+   "lidar_median": 974.0,
+   "radar_any": 0.6537847333120409,
+   "radar_median_hit": 3.0,
+   "moving": 0.8280410356619443,
+   "height_median": 118.45574951171875,
+   "small": 0.0,
+   "no_lidar_radar": 0.0,
+   "none": 0.00031938677738741617
+  },
+  "night/30-50": {
+   "n": 3566,
+   "lidar_any": 0.9806505888951206,
+   "lidar_5": 0.9736399326977005,
+   "lidar_median": 145.0,
+   "radar_any": 0.5813236118900729,
+   "radar_median_hit": 3.0,
+   "moving": 0.79401833092137,
+   "height_median": 42.910186767578125,
+   "small": 0.0179472798653954,
+   "no_lidar_radar": 0.005047672462142457,
+   "none": 0.01430173864273696
+  },
+  "night/50-100": {
+   "n": 7753,
+   "lidar_any": 0.859796207919515,
+   "lidar_5": 0.7938862375854507,
+   "lidar_median": 29.0,
+   "radar_any": 0.599251902489359,
+   "radar_median_hit": 3.0,
+   "moving": 0.6383986224709427,
+   "height_median": 24.315872192382812,
+   "small": 0.5151554237069521,
+   "no_lidar_radar": 0.06358828840448859,
+   "none": 0.07661550367599639
+  },
+  "night/100-200": {
+   "n": 2966,
+   "lidar_any": 0.6395819285232637,
+   "lidar_5": 0.36918408631153066,
+   "lidar_median": 3.0,
+   "radar_any": 0.6496965610249494,
+   "radar_median_hit": 3.0,
+   "moving": 0.6305137519460301,
+   "height_median": 12.28375244140625,
+   "small": 0.9834794335805799,
+   "no_lidar_radar": 0.19116655428186108,
+   "none": 0.16925151719487525
+  },
+  "night/50-200": {
+   "n": 10719,
+   "lidar_any": 0.7988618341263177,
+   "lidar_5": 0.6763690642783842,
+   "lidar_median": 14.0,
+   "radar_any": 0.6132101875174923,
+   "radar_median_hit": 3.0,
+   "moving": 0.6360870226684923,
+   "height_median": 20.59417724609375,
+   "small": 0.6447429797555743,
+   "no_lidar_radar": 0.09888982181173617,
+   "none": 0.10224834406194608
+  },
+  "rain/0-30": {
+   "n": 300,
+   "lidar_any": 1.0,
+   "lidar_5": 1.0,
+   "lidar_median": 905.0,
+   "radar_any": 0.38,
+   "radar_median_hit": 2.0,
+   "moving": 0.9824561403508771,
+   "height_median": 113.68922424316406,
+   "small": 0.0,
+   "no_lidar_radar": 0.0,
+   "none": 0.0
+  },
+  "rain/30-50": {
+   "n": 548,
+   "lidar_any": 0.9945255474452555,
+   "lidar_5": 0.9762773722627737,
+   "lidar_median": 174.0,
+   "radar_any": 0.9142335766423357,
+   "radar_median_hit": 2.0,
+   "moving": 0.9840319361277445,
+   "height_median": 45.311767578125,
+   "small": 0.0,
+   "no_lidar_radar": 0.0,
+   "none": 0.005474452554744526
+  },
+  "rain/50-100": {
+   "n": 1159,
+   "lidar_any": 0.9266609145815358,
+   "lidar_5": 0.8895599654874892,
+   "lidar_median": 29.0,
+   "radar_any": 0.8904227782571182,
+   "radar_median_hit": 2.0,
+   "moving": 0.9854651162790697,
+   "height_median": 23.60003662109375,
+   "small": 0.5936151855047455,
+   "no_lidar_radar": 0.03968938740293356,
+   "none": 0.03364969801553063
+  },
+  "rain/100-200": {
+   "n": 951,
+   "lidar_any": 0.7991587802313355,
+   "lidar_5": 0.5825446898002103,
+   "lidar_median": 6.0,
+   "radar_any": 0.704521556256572,
+   "radar_median_hit": 3.0,
+   "moving": 0.8761194029850746,
+   "height_median": 12.582672119140625,
+   "small": 1.0,
+   "no_lidar_radar": 0.08937960042060988,
+   "none": 0.11146161934805468
+  },
+  "rain/50-200": {
+   "n": 2110,
+   "lidar_any": 0.8691943127962085,
+   "lidar_5": 0.7511848341232228,
+   "lidar_median": 15.0,
+   "radar_any": 0.8066350710900474,
+   "radar_median_hit": 2.0,
+   "moving": 0.9424206815511164,
+   "height_median": 15.295440673828125,
+   "small": 0.7767772511848341,
+   "no_lidar_radar": 0.06208530805687204,
+   "none": 0.06872037914691943
+  },
+  "all/0-30": {
+   "n": 28980,
+   "lidar_any": 0.9962387853692202,
+   "lidar_5": 0.9943064182194618,
+   "lidar_median": 725.5,
+   "radar_any": 0.5375776397515528,
+   "radar_median_hit": 2.0,
+   "moving": 0.8409397265549778,
+   "height_median": 98.93115234375,
+   "small": 0.0008971704623878537,
+   "no_lidar_radar": 0.0011387163561076604,
+   "none": 0.002622498274672188
+  },
+  "all/30-50": {
+   "n": 30373,
+   "lidar_any": 0.9684588285648438,
+   "lidar_5": 0.9523919270404636,
+   "lidar_median": 125.0,
+   "radar_any": 0.5991834853323675,
+   "radar_median_hit": 3.0,
+   "moving": 0.7721852849057641,
+   "height_median": 43.696624755859375,
+   "small": 0.0342738616534422,
+   "no_lidar_radar": 0.004477661080564976,
+   "none": 0.027063510354591248
+  },
+  "all/50-100": {
+   "n": 51141,
+   "lidar_any": 0.8786101171271582,
+   "lidar_5": 0.7989871140572143,
+   "lidar_median": 26.0,
+   "radar_any": 0.6203633092821806,
+   "radar_median_hit": 3.0,
+   "moving": 0.7477148080438757,
+   "height_median": 23.392059326171875,
+   "small": 0.5629142957705168,
+   "no_lidar_radar": 0.037699693005611934,
+   "none": 0.08369018986722981
+  },
+  "all/100-200": {
+   "n": 20941,
+   "lidar_any": 0.7062699966572752,
+   "lidar_5": 0.47963325533642137,
+   "lidar_median": 4.0,
+   "radar_any": 0.5834487369275584,
+   "radar_median_hit": 3.0,
+   "moving": 0.6410214437714847,
+   "height_median": 12.84417724609375,
+   "small": 0.9796571319421231,
+   "no_lidar_radar": 0.11642232940165226,
+   "none": 0.17730767394107252
+  },
+  "all/50-200": {
+   "n": 72082,
+   "lidar_any": 0.8285424932715518,
+   "lidar_5": 0.70620959462834,
+   "lidar_median": 15.0,
+   "radar_any": 0.6096390222246886,
+   "radar_median_hit": 3.0,
+   "moving": 0.7180502457673402,
+   "height_median": 19.739471435546875,
+   "small": 0.6839849060791876,
+   "no_lidar_radar": 0.060569906495380264,
+   "none": 0.1108876002330679
+  }
+ },
+ "ego_speed": {
+  "highway": {
+   "median": 26.186803470829624,
+   "lidar_points": 20723.0,
+   "radar_returns": 108.0
+  },
+  "urban": {
+   "median": 10.660476890382714,
+   "lidar_points": 21213.5,
+   "radar_returns": 74.0
+  },
+  "night": {
+   "median": 14.055457296058647,
+   "lidar_points": 22146.5,
+   "radar_returns": 90.0
+  },
+  "rain": {
+   "median": 31.08137378425982,
+   "lidar_points": 21045.0,
+   "radar_returns": 125.0
+  },
+  "all": {
+   "median": 17.74913191810982,
+   "lidar_points": 21113.0,
+   "radar_returns": 90.0
+  }
+ }
+}

@@ -6,9 +6,13 @@ from clocs_r.aimotive import DEFAULT_ROOT, Sequence, list_sequences
 CAR_CLASSES = ("CAR", "VAN", "PICKUP")
 # Large vehicles are neither targets nor false positives, as KITTI treats classes similar to Car
 IGNORE_CLASSES = ("TRUCK", "BUS", "TRAILER")
-# Daytime clear weather only: the aiMotive highway and urban folders (night and rain are left out)
-ODDS = ("highway", "urban")
-# Training scenes held out for hyperparameter and feature-set selection (Section II-C/E): every 10th per driving condition
+# Driving conditions (the aiMotive folder names). Daytime clear weather is highway and urban; night and rain are the
+# adverse conditions. Results before 2026-11-14 used CLEAR_ODDS only; CLOCS_ODDS=highway,urban reproduces that setting.
+CLEAR_ODDS = ("highway", "urban")
+ADVERSE_ODDS = ("night", "rain")
+ODDS = tuple(os.environ.get("CLOCS_ODDS", ",".join(CLEAR_ODDS + ADVERSE_ODDS)).split(","))
+# Training scenes held out for hyperparameter and feature-set selection (Section II-C/E): every 10th per driving condition,
+# so each condition, rain included (4 training scenes), keeps at least one holdout scene
 HOLDOUT_EVERY = 10
 # Scenes with highway tunnels, where the camera is badly underexposed (mean luminance below 10/255 in sampled frames).
 # None of the training scenes contain one, so results are also reported without these.

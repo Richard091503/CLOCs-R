@@ -52,7 +52,9 @@ def main():
     for name in sets:
         idx = [radar_features.FEATURES.index(f) for f in radar_features.FEATURE_SETS[name]]
         net = fusion.FusionNet(len(idx)).to(device)
-        net.load_state_dict(torch.load(f"{args.fusion_dir}/{name}_s1/fusion.pth", map_location=device)["model"])
+        flat = pathlib.Path(args.fusion_dir) / f"{name}_s1.pth"  # tune_fusion's layout; train_fusion's is {name}_s1/fusion.pth
+        path = flat if flat.exists() else pathlib.Path(args.fusion_dir) / f"{name}_s1" / "fusion.pth"
+        net.load_state_dict(torch.load(path, map_location=device)["model"])
         forward = train_fusion.measure_latency(net, base, radar, idx, device)
         feats = np.array(features[name]) * 1000
         result["sets"][name] = dict(features_median_ms=float(np.median(feats)), features_p95_ms=float(np.percentile(feats, 95)), fusion_median_ms=forward,

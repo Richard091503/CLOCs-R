@@ -1,7 +1,10 @@
 """Post hoc tuning of the fusion stage, following results/clocs_radar/tuning/PLAN.md. Reads holdout only unless --splits says otherwise.
 
-A configuration joins changes with "+": R2, T1 (far targets), T2 (residual), T3 (logit input), T4a or T4b (5 or 10 sweeps with motion
-correction) and T5 (RCS). A "R0+" prefix replaces the radar channels with none.
+A configuration joins changes with "+": a radar feature set (R0 for none, R1-R7 of radar_features.FEATURE_SETS; R2 if none is
+named), T1 (far targets), T2 (residual),
+T3 (logit input), T4a or T4b (5 or 10 sweeps with motion correction) and T5 (RCS). --far_weight applies the range-weighted loss
+(range_weight.py) to every configuration of a run. --gate sets the radar gate (delta0,kappa); --nocam scores saved networks
+(--from_weights) with every 2D candidate removed.
 
 Usage: python -m clocs_r.tune_fusion --configs R2,T1,T2 --out results/clocs_radar/tuning/selection.json
 """
@@ -14,7 +17,7 @@ import pickle
 import numpy as np
 import torch
 
-from clocs_r import cache_cells, metrics, radar_features, splits, train_fusion
+from clocs_r import cache_cells, fusion, metrics, radar_features, splits, train_fusion
 
 GATE = (0.5, 0.02)
 BASE_SET = "R2"
@@ -28,16 +31,19 @@ DATA = {}
 def parse(config):
     """Turn a name such as T1+T2 into its settings."""
     parts = config.split("+")
-    assert set(parts) <= {"R0", "R2", "T1", "T2", "T3", "T4a", "T4b", "T5"}, config
+    assert set(parts) <= set(radar_features.FEATURE_SETS) | {"T1", "T2", "T3", "T4a", "T4b", "T5"}, config
+    sets = [p for p in parts if p in radar_features.FEATURE_SETS]
+    assert len(sets) <= 1, config
     sweeps = 5 if "T4a" in parts else 10 if "T4b" in parts else cache_cells.SWEEPS
-    return dict(radar="R0" not in parts, far_targets="T1" in parts, sweeps=sweeps, motion="T4a" in parts or "T4b" in parts, rcs="T5" in parts,
+    base = sets[0] if sets and sets[0] != "R0" else BASE_SET  # R0 keeps the old placeholder, so saved settings still match
+    return dict(radar="R0" not in parts, base=base, far_targets="T1" in parts, sweeps=sweeps, motion="T4a" in parts or "T4b" in parts, rcs="T5" in parts,
                 net=dict(residual="T2" in parts, logit_input="T3" in parts))
 
 
 def names_idx(cfg):
     if not cfg["radar"]:
         return []
-    idx = [radar_features.FEATURES.index(f) for f in radar_features.FEATURE_SETS[BASE_SET]]
+    idx = [radar_features.FEATURES.index(f) for f in radar_features.FEATURE_SETS[cfg.get("base", BASE_SET)]]
     return idx + [RCS_INDEX] if cfg["rcs"] else idx
 
 
@@ -98,21 +104,31 @@ def radar_data(split, cfg, args):
 
 def run_seed(job):
     """In a forked child, so that CUDA is first used here and the parent's cached frames are shared."""
-    name, cfg, seed, epochs, eval_splits, out = job
+    name, cfg, seed, epochs, eval_splits, out, far_weight, from_weights, nocam = job
     torch.set_num_threads(1)
     device = torch.device("cuda")
     idx = names_idx(cfg)
-    train = DATA["train_far"] if cfg["far_targets"] else DATA["train"]
-    radar = DATA["radar_train"] if idx else [None] * len(train)
-    net, log = train_fusion.fit(train, radar, idx, epochs, seed, device, f"{name} s{seed}", net_kwargs=cfg["net"])
-    torch.save(dict(model=net.state_dict(), config=name, settings=cfg, gate=GATE), pathlib.Path(out) / f"{name}_s{seed}.pth")
-    result = dict(seed=seed, final_loss=log[-1]["loss"])
+    path = pathlib.Path(out) / f"{name}_s{seed}.pth"
+    if from_weights:  # score the saved networks again, e.g. on val after selection, instead of retraining them
+        state = torch.load(path, map_location="cpu")
+        assert state["settings"] == cfg and state.get("far_weight", 1.0) == far_weight and tuple(state.get("gate", GATE)) == tuple(GATE), \
+            f"{path} was trained differently"
+        net = fusion.FusionNet(len(idx), **cfg["net"]).to(device)
+        net.load_state_dict(state["model"])
+        result = dict(seed=seed, weights=str(path))
+    else:
+        train = DATA["train_far"] if cfg["far_targets"] else DATA["train"]
+        radar = DATA["radar_train"] if idx else [None] * len(train)
+        net, log = train_fusion.fit(train, radar, idx, epochs, seed, device, f"{name} s{seed}", net_kwargs=cfg["net"], far_weight=far_weight)
+        torch.save(dict(model=net.state_dict(), config=name, settings=cfg, gate=GATE, far_weight=far_weight), path)
+        result = dict(seed=seed, final_loss=log[-1]["loss"] if log else None, loss=log)
     for split in eval_splits:
-        result[split] = train_fusion.evaluate(net, DATA[split], DATA["radar_" + split] if idx else [None] * len(DATA[split]), idx, device)
+        result[split] = train_fusion.evaluate(net, DATA[split], DATA["radar_" + split] if idx else [None] * len(DATA[split]), idx, device, nocam)
     return result
 
 
 def main():
+    global GATE
     ap = argparse.ArgumentParser()
     ap.add_argument("--configs", required=True)
     ap.add_argument("--out", required=True)
@@ -122,26 +138,36 @@ def main():
     ap.add_argument("--cand3d", default="runs/candidates3d")
     ap.add_argument("--cand2d", default="runs/candidates2d")
     ap.add_argument("--epochs", type=int, default=3)
+    ap.add_argument("--far_weight", type=float, default=1.0, help="range-weighted fusion loss, applied to every configuration")
+    ap.add_argument("--from_weights", action="store_true", help="evaluate the networks saved in --weights instead of training")
+    ap.add_argument("--seeds", default=",".join(map(str, SEEDS)), help="comma-separated training seeds, one process each")
+    ap.add_argument("--gate", default=",".join(map(str, GATE)), help="radar gate delta0,kappa (Eq. 2)")
+    ap.add_argument("--nocam", action="store_true", help="with --from_weights: score with all 2D candidates removed")
     args = ap.parse_args()
+    GATE = tuple(float(x) for x in args.gate.split(","))
+    assert not args.nocam or args.from_weights, "--nocam only scores saved networks"
+    seeds = [int(s) for s in args.seeds.split(",")]
     eval_splits = args.splits.split(",")
     pathlib.Path(args.weights).mkdir(parents=True, exist_ok=True)
     out = pathlib.Path(args.out)
     results = json.load(open(out)) if out.exists() else {}
     ctx = mp.get_context("fork")
 
-    DATA["train"], _ = cache_cells.load("train", args.cells, *GATE, cache_cells.SWEEPS, use_radar=False)
+    if not args.from_weights:
+        DATA["train"], _ = cache_cells.load("train", args.cells, *GATE, cache_cells.SWEEPS, use_radar=False)
     for split in eval_splits:
         DATA[split], _ = cache_cells.load(split, args.cells, *GATE, cache_cells.SWEEPS, use_radar=False)
     for name in args.configs.split(","):
         cfg = parse(name)
-        if cfg["far_targets"] and "train_far" not in DATA:
+        if cfg["far_targets"] and "train_far" not in DATA and not args.from_weights:  # targets only matter for training
             DATA["train_far"] = [dict(item, target=t, weight=w) for item, (t, w) in zip(DATA["train"], far_targets(args))]
-        DATA["radar_train"] = radar_data("train", cfg, args)
+        DATA["radar_train"] = None if args.from_weights else radar_data("train", cfg, args)
         for split in eval_splits:
             DATA["radar_" + split] = radar_data(split, cfg, args)
-        with ctx.Pool(len(SEEDS)) as pool:
-            runs = pool.map(run_seed, [(name, cfg, s, args.epochs, eval_splits, args.weights) for s in SEEDS])
-        results[name] = dict(settings=cfg, runs=runs)
+        with ctx.Pool(len(seeds)) as pool:
+            runs = pool.map(run_seed, [(name, cfg, s, args.epochs, eval_splits, args.weights, args.far_weight, args.from_weights, args.nocam)
+                                       for s in seeds])
+        results[name] = dict(settings=cfg, far_weight=args.far_weight, gate=list(GATE), nocam=args.nocam, runs=runs)
         far = {split: [r[split]["overall"]["50-200"]["APCD"] for r in runs] for split in eval_splits}
         print(name, {k: f"{np.mean(v):.4f} ({[round(x, 4) for x in v]})" for k, v in far.items()}, flush=True)
         with open(out, "w") as f:

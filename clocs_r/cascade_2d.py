@@ -25,6 +25,10 @@ BASE = os.path.join(os.path.dirname(mmdet.__file__), ".mim/configs/cascade_rcnn/
 COCO_WEIGHTS = ("https://download.openmmlab.com/mmdetection/v2.0/cascade_rcnn/cascade_rcnn_r50_fpn_1x_coco/"
                 "cascade_rcnn_r50_fpn_1x_coco_20200316-3dc56deb.pth")
 K_2D = 200  # candidates kept per image, as in CLOCs
+NATIVE = (1280, 704)  # front camera resolution
+# Images are upscaled 1.5x for training and inference (since 2026-11-14): cars beyond 100 m are often under 25 px tall at
+# native resolution, below what the FPN's finest level resolves well. 1.0 restores the earlier setting.
+SCALE = 1.5
 
 
 def write_coco(path, split):
@@ -44,7 +48,7 @@ def write_coco(path, split):
     return len(images), len(anns)
 
 
-def build_cfg(out, epochs, ann_file=None):
+def build_cfg(out, epochs, ann_file=None, scale=SCALE):
     cfg = Config.fromfile(BASE)
     for head in cfg.model.roi_head.bbox_head:
         head.num_classes = 1
@@ -53,7 +57,7 @@ def build_cfg(out, epochs, ann_file=None):
     # Candidates before NMS with a very low score threshold, top K per image
     cfg.model.test_cfg.rcnn = mmcv.ConfigDict(score_thr=0.001, nms=dict(type="nms", iou_threshold=0.95), max_per_img=K_2D)
     norm = cfg.img_norm_cfg
-    size = (1280, 704)
+    size = (int(NATIVE[0] * scale), int(NATIVE[1] * scale))
     train_pipeline = [dict(type="LoadImageFromFile"), dict(type="LoadAnnotations", with_bbox=True),
                       dict(type="Resize", img_scale=size, keep_ratio=True), dict(type="RandomFlip", flip_ratio=0.5),
                       dict(type="Normalize", **norm), dict(type="Pad", size_divisor=32),
@@ -64,7 +68,7 @@ def build_cfg(out, epochs, ann_file=None):
                          dict(type="Pad", size_divisor=32), dict(type="ImageToTensor", keys=["img"]),
                          dict(type="Collect", keys=["img"])])]
     common = dict(type="CocoDataset", classes=("Car",), img_prefix="")
-    cfg.data = dict(samples_per_gpu=4, workers_per_gpu=4,
+    cfg.data = dict(samples_per_gpu=4, workers_per_gpu=8,
                     train=dict(ann_file=ann_file, pipeline=train_pipeline, filter_empty_gt=True, **common),
                     val=dict(ann_file=ann_file, pipeline=test_pipeline, test_mode=True, **common),
                     test=dict(ann_file=ann_file, pipeline=test_pipeline, test_mode=True, **common))
@@ -91,7 +95,12 @@ def train(args):
     ann = out / "train_coco.json"
     if not ann.exists():
         print("COCO labels:", write_coco(ann, "train"), flush=True)
-    cfg = build_cfg(out, args.epochs, str(ann))
+    cfg = build_cfg(out, args.epochs, str(ann), args.scale)
+    if args.max_iters:
+        cfg.runner = dict(type="IterBasedRunner", max_iters=args.max_iters)
+        cfg.lr_config.step = [args.max_iters]
+        cfg.log_config.interval = 20
+        cfg.checkpoint_config = dict(interval=10 ** 9)
     cfg.dump(str(out / "config.py"))
     dataset = build_dataset(cfg.data.train)
     model = build_detector(cfg.model, train_cfg=cfg.get("train_cfg"), test_cfg=cfg.get("test_cfg"))
@@ -101,13 +110,15 @@ def train(args):
 
 
 def export(args):
-    cfg = build_cfg(args.out, 1, "")
+    cfg = build_cfg(args.out, 1, "", args.scale)
     cfg.load_from = None
     cfg.model.pretrained = None
     model = init_detector(cfg, args.ckpt, device="cuda:0")
     out_root = pathlib.Path(args.candidates)
     for split in args.splits.split(","):
         items = splits.frames(split)
+        if args.limit:
+            items = items[:: max(1, len(items) // args.limit)][:args.limit]
         for i, (seq, frame) in enumerate(items):
             path = out_root / seq.name / f"{frame:07d}.npy"
             if path.exists():
@@ -127,7 +138,9 @@ def main():
     ap.add_argument("--ckpt")
     ap.add_argument("--candidates", default="runs/candidates2d")
     ap.add_argument("--splits", default="val,holdout,train")
-    ap.add_argument("--smoke", action="store_true")
+    ap.add_argument("--scale", type=float, default=SCALE, help="image upscaling for training and inference")
+    ap.add_argument("--limit", type=int, default=0, help="export only this many frames per split (smoke test)")
+    ap.add_argument("--max_iters", type=int, default=0, help="stop after this many iterations (smoke test)")
     args = ap.parse_args()
     (train if args.mode == "train" else export)(args)
 

@@ -58,8 +58,10 @@ def base_item(seq, frame, cand3d, cand2d):
     target[best >= POS_IOU] = 1.0
     weight[(best > NEG_IOU) & (best < POS_IOU)] = 0.0
     weight[on_ignored] = 0.0
-    # The 3D score and distance of each cell are rebuilt from its candidate at load time, which saves more than half the disk
-    return dict(pairs=cells[:, :2].astype(np.float32), column=column.astype(np.int16), dist=dist.astype(np.float32),
+    # The 3D score and distance of each cell are rebuilt from its candidate at load time, which saves more than half the disk.
+    # IoU and 2D score are stored as float16 (since 2026-11-14; error about 1e-3): the full train split is about 19,000 frames
+    # of up to 200 x 2,000 pairs, which in float32 needs about 12 GB of memory. They are float32 again in frame_cells.
+    return dict(pairs=cells[:, :2].astype(np.float16), column=column.astype(np.int16), dist=dist.astype(np.float32),
                 boxes=boxes, scores=scores, target=target, weight=weight, gt=gt, keep_eval=keep_eval,
                 seq=seq.name, odd=seq.odd, frame=frame)
 

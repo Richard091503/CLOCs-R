@@ -11,6 +11,7 @@ import pathlib
 import numpy as np
 
 from clocs_r import aimotive, cache_cells, metrics, splits
+from clocs_r.train_fusion import FAR, condition_groups
 
 
 def frame_3d(job):
@@ -40,12 +41,8 @@ def frame_2d(job):
 
 
 def groups(records):
-    """Named subsets of a split's frames: all of them, each driving condition, and no tunnels."""
-    out = {"overall": records}
-    for odd in splits.ODDS:
-        out[odd] = [r for r in records if r["odd"] == odd]
-    out["no_tunnels"] = [r for r in records if r["seq"] not in splits.TUNNEL_SCENES]
-    return {name: rows for name, rows in out.items() if rows}
+    """Named subsets of a split's frames: all, clear and adverse weather, each driving condition, and no tunnels."""
+    return condition_groups(records, odd=lambda r: r["odd"], seq=lambda r: r["seq"])
 
 
 def update(path, split, entry):
@@ -62,16 +59,20 @@ def main():
     ap.add_argument("--cand3d", default="runs/candidates3d")
     ap.add_argument("--cand2d", default="runs/candidates2d")
     ap.add_argument("--workers", type=int, default=14)
+    ap.add_argument("--limit", type=int, default=0, help="only this many frames per split (smoke test)")
     args = ap.parse_args()
     out = pathlib.Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     for split in args.splits.split(","):
         items = [(seq.path, f) for seq, f in splits.frames(split)]
+        if args.limit:
+            items = items[:: max(1, len(items) // args.limit)][:args.limit]
         with mp.Pool(args.workers) as pool:
             rec3d = pool.map(frame_3d, [(s, f, args.cand3d) for s, f in items], chunksize=16)
             rec2d = pool.map(frame_2d, [(s, f, args.cand2d) for s, f in items], chunksize=16)
-        second = {name: metrics.evaluate([(r["gt"], r["det"], r["score"]) for r in rows]) for name, rows in groups(rec3d).items()}
-        cascade = {name: metrics.evaluate_2d(rows) for name, rows in groups(rec2d).items()}
+        second = {name: metrics.evaluate([(r["gt"], r["det"], r["score"]) for r in rows], bins=aimotive.DIST_BINS + [FAR])
+                  for name, rows in groups(rec3d).items()}
+        cascade = {name: metrics.evaluate_2d(rows, bins=aimotive.DIST_BINS + [FAR]) for name, rows in groups(rec2d).items()}
         second["frames"], cascade["frames"] = len(items), len(items)
         update(out / "aimotive_second.json", split, second)
         update(out / "aimotive_cascade.json", split, cascade)

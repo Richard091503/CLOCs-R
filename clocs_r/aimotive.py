@@ -7,7 +7,8 @@ import pickle
 import numpy as np
 from scipy.spatial.transform import Rotation
 
-DEFAULT_ROOT = os.path.expanduser("~/Documents/aimotive_clear")
+# Reduced dataset written by fetch_aimotive.py; AIMOTIVE_ROOT overrides the default location
+DEFAULT_ROOT = os.path.expanduser(os.environ.get("AIMOTIVE_ROOT", "~/Documents/aimotive_clear"))
 # Detection region shared with the aiMotive baselines: forward half of their [-204.8, 204.8] x [-25.6, 25.6] m grid
 REGION = dict(x=(0.0, 204.8), y=(-25.6, 25.6))
 DIST_BINS = [(0, 30), (30, 50), (50, 100), (100, 200)]

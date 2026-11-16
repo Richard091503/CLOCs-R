@@ -10,7 +10,7 @@ import time
 import numpy as np
 import torch
 
-from clocs_r import aimotive, cache_cells, fusion, metrics, radar_features, splits
+from clocs_r import aimotive, cache_cells, fusion, metrics, radar_features, range_weight, splits
 
 FAR = (50, 200)  # the 50-100 m and 100-200 m bins scored together, for the selection metric of Section II-C
 
@@ -22,7 +22,7 @@ def frame_cells(item, radar, names_idx, device, nocam=False):
         pairs = np.full((len(column), 2), fusion.MISSING, dtype=np.float32)
     else:
         column, pairs = item["column"], item["pairs"]
-    cells = np.concatenate([pairs, item["scores"][column, None], item["dist"][column, None]], 1)
+    cells = np.concatenate([pairs.astype(np.float32), item["scores"][column, None], item["dist"][column, None]], 1)
     x = torch.from_numpy(cells).to(device)
     col = torch.from_numpy(np.asarray(column, dtype=np.int64)).to(device)
     if names_idx:
@@ -50,18 +50,29 @@ def predict(net, base, radar, names_idx, device, nocam=False, nms_thresh=0.1, sc
         net.train()
 
 
+def condition_groups(records, odd=lambda r: r[3], seq=lambda r: r[4]):
+    """Named subsets of a split's records: all, clear and adverse weather, each driving condition, and no tunnels."""
+    out = {"overall": records,
+           "clear": [r for r in records if odd(r) in splits.CLEAR_ODDS],
+           "adverse": [r for r in records if odd(r) in splits.ADVERSE_ODDS]}
+    for o in splits.ODDS:
+        out[o] = [r for r in records if odd(r) == o]
+    out["no_tunnels"] = [r for r in records if seq(r) not in splits.TUNNEL_SCENES]
+    return {name: rows for name, rows in out.items() if rows}
+
+
 def evaluate(net, base, radar, names_idx, device, nocam=False):
-    """Metrics by distance bin, overall and for each driving condition."""
+    """Metrics by distance bin (with beyond 50 m as one more bin), overall and for each group of driving conditions."""
     records = [(it["gt"], b, s, it["odd"], it["seq"]) for it, b, s in predict(net, base, radar, names_idx, device, nocam)]
-    out = {"overall": metrics.evaluate([r[:3] for r in records], bins=aimotive.DIST_BINS + [FAR])}
-    for odd in sorted({r[3] for r in records}):
-        out[odd] = metrics.evaluate([r[:3] for r in records if r[3] == odd])
-    out["no_tunnels"] = metrics.evaluate([r[:3] for r in records if r[4] not in splits.TUNNEL_SCENES])
-    return out
+    return {name: metrics.evaluate([r[:3] for r in rows], bins=aimotive.DIST_BINS + [FAR])
+            for name, rows in condition_groups(records).items()}
 
 
-def fit(train, train_radar, names_idx, epochs, seed, device, label="", net_kwargs=None):
-    """Train a fusion network on cached frames. Returns the network and its loss log."""
+def fit(train, train_radar, names_idx, epochs, seed, device, label="", net_kwargs=None, far_weight=1.0):
+    """Train a fusion network on cached frames. Returns the network and its loss log.
+
+    far_weight: weight of candidates beyond 60 m in the loss, ramping up from 40 m (range_weight.py); 1 leaves it unweighted.
+    """
     torch.manual_seed(seed)
     rng = np.random.RandomState(seed)
     net = fusion.FusionNet(len(names_idx), **(net_kwargs or {})).to(device)
@@ -77,7 +88,10 @@ def fit(train, train_radar, names_idx, epochs, seed, device, label="", net_kwarg
             x, col = frame_cells(item, train_radar[i], names_idx, device)
             logits = net(x, col, len(item["scores"]))
             tgt = torch.from_numpy(item["target"]).to(device)
-            w = torch.from_numpy(item["weight"]).to(device)
+            w = item["weight"]
+            if far_weight != 1.0:
+                w = w * range_weight.weight(item["dist"] * cache_cells.MAX_RANGE, far_weight=far_weight).astype(np.float32)
+            w = torch.from_numpy(w).to(device)
             loss = fusion.focal_loss(logits, tgt, w) / max(tgt.sum().item(), 1.0)  # normalized by positives, as in CLOCs
             optim.zero_grad()
             loss.backward()
@@ -106,6 +120,8 @@ def main():
     ap.add_argument("--seed", type=int, default=3)
     ap.add_argument("--eval_splits", default="holdout,val")
     ap.add_argument("--nocam", action="store_true", help="also evaluate with all 2D candidates removed")
+    ap.add_argument("--residual", action="store_true", help="T2: the fused logit is SECOND's logit plus the network output")
+    ap.add_argument("--far_weight", type=float, default=1.0, help="loss weight beyond 60 m (ramp from 40 m)")
     args = ap.parse_args()
 
     device = torch.device("cuda")
@@ -116,7 +132,8 @@ def main():
     use_radar = bool(names_idx)
     t0 = time.time()
     train, train_radar = cache_cells.load(args.train_split, args.cells, args.delta0, args.kappa, args.sweeps, use_radar)
-    net, log = fit(train, train_radar, names_idx, args.epochs, args.seed, device, args.feature_set)
+    net, log = fit(train, train_radar, names_idx, args.epochs, args.seed, device, args.feature_set,
+                   net_kwargs=dict(residual=args.residual), far_weight=args.far_weight)
     torch.save(dict(model=net.state_dict(), args=vars(args)), out / "fusion.pth")
 
     results = dict(args=vars(args), train_seconds=time.time() - t0, loss=log, params=sum(p.numel() for p in net.parameters()))

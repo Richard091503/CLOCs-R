@@ -1,8 +1,9 @@
-"""Fetch only the parts of the aiMotive dataset CLOCs-R needs, without downloading the archive.
+"""Fetch only the parts of the aiMotive dataset CLOCs-R needs, from the Kaggle zip or a local copy.
 
 The Kaggle mirror serves the 87 GB dataset as one zip on storage that honours HTTP range
-requests, so we read the zip's index and pull individual files. For each clear-weather sequence
-(daytime highway and urban; night and rain excluded) this keeps:
+requests, so we read the zip's index and pull individual files. With --src, the same files are
+read from an already extracted copy of the dataset instead. For each sequence of the chosen
+driving conditions (--odds; all four by default) this keeps:
 
     meta.pkl        frame ids, kept frames, 3D labels, calibration and ego poses
     radar.npz       every front-radar target of every sweep in the sequence
@@ -12,7 +13,9 @@ requests, so we read the zip's index and pull individual files. For each clear-w
 LiDAR and images are stored only for "kept" frames: every annotated val frame and every
 `--train_stride`-th annotated train frame. Labels, radar and poses are kept for all frames.
 
-Usage: python -m clocs_r.fetch_aimotive --out ~/Documents/aimotive_clear
+Usage:
+    python -m clocs_r.fetch_aimotive --out ~/Documents/aimotive_clear --odds highway,urban          # from Kaggle
+    python -m clocs_r.fetch_aimotive --src ~/datasets/aimotive --out ~/datasets/aimotive_clocs --train_stride 1
 """
 import argparse
 import collections
@@ -36,6 +39,7 @@ KAGGLE_URL = "https://www.kaggle.com/api/v1/datasets/download/tamasmatuszka/aimo
 CAMERA = "F_MIDLONGRANGECAM_CL"
 RADAR = "F_LRR_C"
 CLEAR_ODDS = ("highway", "urban")
+ALL_ODDS = ("highway", "urban", "night", "rain")
 MAX_TAN_FOV = 0.75  # |x/z| in camera coords; about 37 deg, just outside the undistorted image edge
 MAX_RANGE = 210.0
 MAX_GAP = 1 << 20  # merge wanted byte ranges closer than this into a single request
@@ -128,6 +132,40 @@ class Archive:
         raise RuntimeError(f"failed to fetch bytes {start}-{end}")
 
 
+class _LazyFiles(dict):
+    """Reads each file only when it is used, so a whole sequence's LiDAR and images never sit in memory at once."""
+
+    def __init__(self, root, names):
+        super().__init__()
+        self.root, self.names = root, set(names)
+
+    def __missing__(self, name):
+        if name not in self.names:
+            raise KeyError(name)
+        return (self.root / name).read_bytes()
+
+    def __contains__(self, name):
+        return name in self.names
+
+
+class LocalArchive:
+    """The Archive interface over an extracted copy of the dataset (the folder holding train/ and val/)."""
+
+    def __init__(self, root):
+        self.root = pathlib.Path(root).expanduser()
+        self.index = {}
+        for split in ("train", "val"):
+            for path in (self.root / split).rglob("*"):
+                if path.is_file():
+                    self.index[path.relative_to(self.root).as_posix()] = None
+
+    def get_many(self, names):
+        missing = [n for n in names if n not in self.index]
+        if missing:
+            raise KeyError(f"{len(missing)} files missing, e.g. {missing[0]}")
+        return _LazyFiles(self.root, names)
+
+
 def frame_id(name):
     return int(re.findall(r"(\d+)\.\w+$", name)[0])
 
@@ -213,23 +251,26 @@ def convert_sequence(arc, seq, names, out_root, train_stride):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", required=True)
+    ap.add_argument("--src", help="extracted dataset folder (holding train/ and val/); default: stream from Kaggle")
+    ap.add_argument("--odds", default=",".join(ALL_ODDS), help="driving conditions to convert")
     ap.add_argument("--train_stride", type=int, default=2)
     ap.add_argument("--workers", type=int, default=12)
     ap.add_argument("--limit", type=int, default=0, help="only this many sequences (for testing)")
     args = ap.parse_args()
     out = os.path.expanduser(args.out)
 
-    arc = Archive()
+    odds = tuple(args.odds.split(","))
+    arc = LocalArchive(args.src) if args.src else Archive()
     print("archive entries:", len(arc.index), flush=True)
     seqs = collections.defaultdict(list)
     for n in arc.index:
         parts = n.split("/")
-        if len(parts) > 3 and parts[1] in CLEAR_ODDS:
+        if len(parts) > 3 and parts[1] in odds:
             seqs["/".join(parts[:3])].append(n)
     todo = sorted(seqs)
     if args.limit:
         todo = todo[:: max(1, len(todo) // args.limit)][:args.limit]
-    print("clear-weather sequences:", len(todo), flush=True)
+    print(f"sequences ({', '.join(odds)}):", len(todo), flush=True)
 
     t0, done, frames = time.time(), 0, 0
     with ThreadPoolExecutor(args.workers) as pool:
