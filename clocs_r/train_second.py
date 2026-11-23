@@ -1,6 +1,6 @@
 """Train SECOND on aiMotive with OpenPCDet.
 
-Usage: python -m clocs_r.train_second --out runs/second [--epochs N] [--max_iters N] [--resume]
+Usage: python -m clocs_r.train_second --out runs/second [--epochs N] [--max_iters N] [--resume] [--train_split S] [--keep_every N]
 """
 import argparse
 import json
@@ -14,19 +14,24 @@ from pcdet import datasets as pcdet_datasets
 from pcdet.config import cfg, cfg_from_yaml_file
 from pcdet.datasets import build_dataloader
 from pcdet.models import build_network, dense_heads, load_data_to_gpu
+from pcdet.models.backbones_2d import map_to_bev
 from pcdet.utils import common_utils
 
+from clocs_r.radar_dataset import AiMotiveRadarDataset, RadarPillarScatter
 from clocs_r.second_head import RangeWeightedAnchorHead
 from clocs_r.second_dataset import AiMotiveDataset
 
 CONFIG = pathlib.Path(__file__).parent / "configs" / "second_aimotive.yaml"
 
 
-def load_cfg():
+def load_cfg(config=CONFIG):
+    """config: SECOND's by default; Phase 6 passes configs/pointpillar_radar_aimotive.yaml for the radar detector."""
     pcdet_datasets.__all__["AiMotiveDataset"] = AiMotiveDataset
+    pcdet_datasets.__all__["AiMotiveRadarDataset"] = AiMotiveRadarDataset
     dense_heads.__all__["RangeWeightedAnchorHead"] = RangeWeightedAnchorHead
+    map_to_bev.__all__["PointPillarScatter"] = RadarPillarScatter  # the radar detector only; SECOND uses HeightCompression
     # Relative _BASE_CONFIG_ and ROOT_DIR handling live in pcdet; the config itself is standalone
-    cfg_from_yaml_file(str(CONFIG), cfg)
+    cfg_from_yaml_file(str(config), cfg)
     cfg.LOCAL_RANK = 0
     return cfg
 
@@ -38,6 +43,9 @@ def main():
     ap.add_argument("--workers", type=int, default=12)
     ap.add_argument("--resume", action="store_true", help="continue from the newest checkpoint in --out")
     ap.add_argument("--max_iters", type=int, default=0, help="stop early and report speed (smoke test)")
+    ap.add_argument("--train_split", default="train", help="clocs_r.splits name of the training scenes")
+    ap.add_argument("--keep_every", type=int, default=1, help="keep every Nth epoch's checkpoint, and the newest for --resume")
+    ap.add_argument("--config", default=str(CONFIG), help="OpenPCDet config (default: SECOND)")
     args = ap.parse_args()
 
     # Imported here because tools/ is not a package installed with pcdet
@@ -45,9 +53,10 @@ def main():
     sys.path.insert(0, os.path.expanduser("~/OpenPCDet/tools"))
     from train_utils.optimization import build_optimizer, build_scheduler
 
-    c = load_cfg()
+    c = load_cfg(args.config)
     if args.epochs:
         c.OPTIMIZATION.NUM_EPOCHS = args.epochs
+    c.DATA_CONFIG.TRAIN_SPLIT = args.train_split
     out = pathlib.Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     common_utils.set_random_seed(3)
@@ -96,6 +105,8 @@ def main():
                    out / f"checkpoint_epoch_{epoch + 1}.pth")
         with open(out / "loss.json", "w") as f:
             json.dump(losses, f)
+        if epoch > 0 and epoch % args.keep_every:  # the previous epoch, unless it is one to keep
+            (out / f"checkpoint_epoch_{epoch}.pth").unlink(missing_ok=True)
     logger.info("training finished")
 
 

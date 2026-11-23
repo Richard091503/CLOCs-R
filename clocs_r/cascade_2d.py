@@ -48,7 +48,9 @@ def write_coco(path, split):
     return len(images), len(anns)
 
 
-def build_cfg(out, epochs, ann_file=None, scale=SCALE):
+def build_cfg(out, epochs, ann_file=None, scale=SCALE, accum=1):
+    """accum > 1 splits each batch of 4 images into `accum` steps with summed gradients (for GPUs under 24 GB).
+    The backbone's BatchNorm statistics are frozen (norm_eval), so this trains like batch 4."""
     cfg = Config.fromfile(BASE)
     for head in cfg.model.roi_head.bbox_head:
         head.num_classes = 1
@@ -68,13 +70,17 @@ def build_cfg(out, epochs, ann_file=None, scale=SCALE):
                          dict(type="Pad", size_divisor=32), dict(type="ImageToTensor", keys=["img"]),
                          dict(type="Collect", keys=["img"])])]
     common = dict(type="CocoDataset", classes=("Car",), img_prefix="")
-    cfg.data = dict(samples_per_gpu=4, workers_per_gpu=8,
+    assert 4 % accum == 0, "accum must divide the batch of 4"
+    cfg.data = dict(samples_per_gpu=4 // accum, workers_per_gpu=8,
                     train=dict(ann_file=ann_file, pipeline=train_pipeline, filter_empty_gt=True, **common),
                     val=dict(ann_file=ann_file, pipeline=test_pipeline, test_mode=True, **common),
                     test=dict(ann_file=ann_file, pipeline=test_pipeline, test_mode=True, **common))
     cfg.optimizer = dict(type="SGD", lr=0.005, momentum=0.9, weight_decay=0.0001)  # linear scaling: 0.02 at batch 16
     cfg.optimizer_config = dict(grad_clip=dict(max_norm=35, norm_type=2))
-    cfg.lr_config = dict(policy="step", warmup="linear", warmup_iters=300, warmup_ratio=0.001, step=[epochs - 1])
+    if accum > 1:
+        cfg.optimizer_config = dict(type="GradientCumulativeOptimizerHook", cumulative_iters=accum, **cfg.optimizer_config)
+    # Warmup counts loader iterations, so it is scaled to stay 300 optimizer steps
+    cfg.lr_config = dict(policy="step", warmup="linear", warmup_iters=300 * accum, warmup_ratio=0.001, step=[epochs - 1])
     cfg.runner = dict(type="EpochBasedRunner", max_epochs=epochs)
     cfg.checkpoint_config = dict(interval=1, max_keep_ckpts=1)
     cfg.log_config = dict(interval=100, hooks=[dict(type="TextLoggerHook")])
@@ -92,10 +98,10 @@ def build_cfg(out, epochs, ann_file=None, scale=SCALE):
 def train(args):
     out = pathlib.Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
-    ann = out / "train_coco.json"
+    ann = out / ("train_coco.json" if args.train_split == "train" else f"{args.train_split}_coco.json")
     if not ann.exists():
-        print("COCO labels:", write_coco(ann, "train"), flush=True)
-    cfg = build_cfg(out, args.epochs, str(ann), args.scale)
+        print("COCO labels:", write_coco(ann, args.train_split), flush=True)
+    cfg = build_cfg(out, args.epochs, str(ann), args.scale, args.accum)
     if args.max_iters:
         cfg.runner = dict(type="IterBasedRunner", max_iters=args.max_iters)
         cfg.lr_config.step = [args.max_iters]
@@ -141,6 +147,8 @@ def main():
     ap.add_argument("--scale", type=float, default=SCALE, help="image upscaling for training and inference")
     ap.add_argument("--limit", type=int, default=0, help="export only this many frames per split (smoke test)")
     ap.add_argument("--max_iters", type=int, default=0, help="stop after this many iterations (smoke test)")
+    ap.add_argument("--train_split", default="train", help="clocs_r.splits name of the training scenes")
+    ap.add_argument("--accum", type=int, default=1, help="gradient accumulation steps per batch of 4 (2 fits a 10 GB GPU)")
     args = ap.parse_args()
     (train if args.mode == "train" else export)(args)
 

@@ -1,3 +1,16 @@
+## Branch `thesis`: the full project record
+
+This branch keeps every model, script, log summary and result of the project, unchanged and executable. `master` holds
+the cut-down LCR version (one CLOCs network over SECOND, Cascade R-CNN and the radar detector D2), with
+`docs/MODELS.md` describing every model on this branch.
+- **Start here:** `results/next_round/STATUS.md` (where things stand), `results/next_round/README.md` (Phases 0–7 and
+  their results), `results/next_round/PLAN.md` (every pre-registered rule) and `results/next_round/DECISIONS.md`
+  (dated decisions and findings, negatives included).
+- **LCR and LCR-D:** `results/next_round/phase7/lcr*.json` and `bootstrap_lcr*_*.json`, with `DECISIONS.md` items 11–14.
+- **Earlier work:** CLOCs-R with radar point features on the full dataset, below and in `results/full_dataset/`.
+- Run scripts expect the run outputs in `runs/` (not in git). On the project VM they are in the `master` checkout:
+  `mkdir runs && ln -s ../../CLOCs-R/runs/next_round runs/next_round` from this checkout's root.
+
 ## CLOCs-R on the full aiMotive dataset (all conditions, range-focused)
 
 CLOCs (camera-LiDAR) and CLOCs-R (camera-LiDAR-radar) trained and compared on every annotated frame of aiMotive, including night and rain, with training focused on cars beyond 50 m.

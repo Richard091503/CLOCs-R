@@ -7,7 +7,7 @@
 source "$(dirname "${BASH_SOURCE[0]}")/../env.sh"
 set -euo pipefail
 cd "$CLOCS_ROOT"
-OUT=results/full_dataset
+OUT="${CLOCS_OUT:-results/full_dataset}"  # CLOCS_OUT writes a separate copy, e.g. for a rerun on other hardware
 W=runs/fusion_full
 mkdir -p "$OUT" "$W" runs/candidates3d runs/candidates2d
 stamp() { echo "== $(date '+%F %T') $*"; }

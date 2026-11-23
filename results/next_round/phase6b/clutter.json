@@ -1,0 +1,11 @@
+{
+ "fit_points": 2725157,
+ "fit_positive": 0.07633432000875473,
+ "motion": true,
+ "auc_fit": 0.9552097007722036,
+ "positive_fit": 0.07633432000875473,
+ "auc_fit_far": 0.9325712889515778,
+ "auc_select": 0.9317957712331537,
+ "positive_select": 0.1163535788655281,
+ "auc_select_far": 0.900859726933229
+}

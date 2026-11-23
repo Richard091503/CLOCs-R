@@ -12,7 +12,8 @@ import torch
 from pcdet.datasets import build_dataloader
 from pcdet.models import build_network, load_data_to_gpu
 
-from clocs_r.train_second import load_cfg
+from clocs_r import metrics
+from clocs_r.train_second import CONFIG, load_cfg
 
 K_3D = 2000
 
@@ -24,8 +25,11 @@ def main():
     ap.add_argument("--splits", default="val,holdout,train")
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--batch", type=int, default=4)
+    ap.add_argument("--config", default=str(CONFIG), help="OpenPCDet config (default: SECOND)")
+    ap.add_argument("--nms", action="store_true", help="keep only the boxes after BEV NMS (0.1, at most 100) with score >= 0.01 "
+                                                        "(Phase 6 radar detector) instead of the top K_3D before NMS")
     args = ap.parse_args()
-    c = load_cfg()
+    c = load_cfg(args.config)
     dataset, loader, _ = build_dataloader(c.DATA_CONFIG, c.CLASS_NAMES, args.batch, dist=False, workers=6, training=False)
     model = build_network(c.MODEL, len(c.CLASS_NAMES), dataset).cuda()
     model.load_state_dict(torch.load(args.ckpt, map_location="cpu")["model_state"])
@@ -47,8 +51,13 @@ def main():
                 path, frame = fid.split("|")
                 dst = out_root / pathlib.Path(path).name / f"{int(frame):07d}.npz"
                 dst.parent.mkdir(parents=True, exist_ok=True)
-                np.savez_compressed(dst, boxes=batch["batch_box_preds"][b, top.indices[b]].cpu().numpy().astype(np.float32),
-                                    scores=top.values[b].cpu().numpy().astype(np.float32))
+                boxes = batch["batch_box_preds"][b, top.indices[b]].cpu().numpy().astype(np.float32)
+                sc = top.values[b].cpu().numpy().astype(np.float32)
+                if args.nms:  # dropping scores below 0.01 first gives the same result: greedy NMS never lets a lower score suppress a higher one
+                    boxes, sc = boxes[sc >= 0.01], sc[sc >= 0.01]
+                    keep = metrics.nms_bev(boxes, sc, 0.1, pre_max=1000, post_max=100)
+                    boxes, sc = boxes[keep], sc[keep]
+                np.savez_compressed(dst, boxes=boxes, scores=sc)
             n += len(batch["frame_id"])
             if n % 400 == 0:
                 print(f"{split} {n}/{len(dataset)} {n / (time.time() - t0):.1f} frames/s", flush=True)

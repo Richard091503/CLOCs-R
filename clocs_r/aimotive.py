@@ -14,11 +14,20 @@ REGION = dict(x=(0.0, 204.8), y=(-25.6, 25.6))
 DIST_BINS = [(0, 30), (30, 50), (50, 100), (100, 200)]
 
 
+class _NumpyCompatUnpickler(pickle.Unpickler):
+    """Reads meta.pkl files written under NumPy 2.x (which pickles arrays as numpy._core.*) with NumPy 1.x."""
+
+    def find_class(self, module, name):
+        if module == "numpy._core" or module.startswith("numpy._core."):
+            module = "numpy.core" + module[len("numpy._core"):]
+        return super().find_class(module, name)
+
+
 class Sequence:
     def __init__(self, path):
         self.path = path
         with open(os.path.join(path, "meta.pkl"), "rb") as f:
-            self.meta = pickle.load(f)
+            self.meta = _NumpyCompatUnpickler(f).load()
         self.name, self.split, self.odd = self.meta["seq"], self.meta["split"], self.meta["odd"]
         self.kept = self.meta["kept"]
         self.cam_from_body = self.meta["cam_from_body"]

@@ -34,6 +34,46 @@ class FusionNet(nn.Module):
         return _max_by_column(x, column, n)
 
 
+class GatedFusion(nn.Module):
+    """Gated corrections to SECOND's logit (results/next_round/PLAN.md, Phase 4):
+
+        s_hat = logit(s3D) + g_cam * cam_term + g_radar * radar_term
+
+    Input cells are laid out as [IoU, s2D, s3D, dist, radar (num_radar), context (num_context)], the same per-cell layout
+    as FusionNet with the context appended. Radar and context are per candidate (equal in all of a candidate's cells).
+    cam_term: the max over a candidate's cells of f_cam(IoU, s2D, s3D, dist). radar_term: f_radar(radar, dist, s3D),
+    once per candidate. (g_cam, g_radar) = sigmoid(f_gate(context, dist)). The last layers of f_cam and f_radar start at
+    zero, so the output starts at logit(s3D); the gates start at 0.5. The gates of the last forward pass are kept in
+    last_gates.
+    """
+
+    def __init__(self, num_radar, num_context, hidden=16):
+        super().__init__()
+        self.m, self.c = num_radar, num_context
+        self.f_cam = nn.Sequential(nn.Linear(4, 18), nn.ReLU(), nn.Linear(18, 36), nn.ReLU(), nn.Linear(36, 36), nn.ReLU(), nn.Linear(36, 1))
+        self.f_radar = nn.Sequential(nn.Linear(num_radar + 2, hidden), nn.ReLU(), nn.Linear(hidden, hidden), nn.ReLU(),
+                                     nn.Linear(hidden, 1)) if num_radar else None
+        self.f_gate = nn.Sequential(nn.Linear(num_context + 1, hidden), nn.ReLU(), nn.Linear(hidden, 2))
+        for f in (self.f_cam, self.f_radar):
+            if f is not None:
+                nn.init.zeros_(f[-1].weight)
+                nn.init.zeros_(f[-1].bias)
+        nn.init.zeros_(self.f_gate[-1].bias)
+        self.last_gates = None
+
+    def forward(self, cells, column, n):
+        cam_term = _max_by_column(self.f_cam(cells[:, :4])[:, 0], column, n)
+        per = cells.new_zeros(n, cells.shape[1])
+        per[column] = cells  # every candidate has at least one cell; its per-candidate channels are the same in all of them
+        s3d, dist = per[:, 2:3], per[:, 3:4]
+        g = torch.sigmoid(self.f_gate(torch.cat([per[:, 4 + self.m:], dist], 1)))
+        self.last_gates = g.detach()
+        out = torch.logit(s3d[:, 0].clamp(1e-6, 1 - 1e-6)) + g[:, 0] * cam_term
+        if self.f_radar is not None:
+            out = out + g[:, 1] * self.f_radar(torch.cat([per[:, 4:4 + self.m], dist, s3d], 1))[:, 0]
+        return out
+
+
 def _max_by_column(x, column, n):
     # torch 1.10 has no scatter_reduce, and repeated indices in a write have no defined order on any device. Sort by value,
     # then stably by column, so the last cell of each column is its maximum, and write only those.
@@ -84,6 +124,34 @@ def build_cells(boxes2d, scores2d, proj2d, scores3d, dist, radar):
     if m:
         cells[:, 4:] = radar[column]
     return cells, column
+
+
+def filter_pairs(column, pairs, n, min_iou=0.0, s2d_floor=MISSING):
+    """Keep only the pair cells with IoU > min_iou and 2D score >= s2d_floor (Phase 3 tokens I1, I2, K40).
+
+    column, pairs: a frame's cached cells (candidate index; IoU and 2D score). Candidates left with no pair get one
+    reserved no-camera row, as in build_cells. With the defaults every cached pair is kept, in the same order.
+    """
+    keep = (pairs[:, 0] > min_iou) & (pairs[:, 0] != MISSING) & (pairs[:, 1] >= np.float16(s2d_floor))
+    matched = np.zeros(n, bool)
+    matched[column[keep]] = True
+    rest = np.nonzero(~matched)[0]
+    return (np.concatenate([column[keep], rest.astype(column.dtype)]),
+            np.concatenate([pairs[keep], np.full((len(rest), 2), MISSING, pairs.dtype)]))
+
+
+def drop_far_camera(column, pairs, far, p, rng):
+    """Token DF (PLAN.md, Phase 7 LCR-D addendum), training only: each candidate with far[j] loses its camera cells with
+    probability p; its radar-detector cells stay. Camera cells are the rows with an IoU (column 0 not MISSING), as token RC
+    lays them out. A candidate left with no cell gets the reserved all-MISSING cell. The inputs are left unchanged."""
+    hide = np.asarray(far, bool) & (rng.rand(len(far)) < p)
+    keep = ~((pairs[:, 0] != MISSING) & hide[column])
+    column, pairs = column[keep], pairs[keep]
+    has = np.zeros(len(far), bool)
+    has[column] = True
+    rest = np.nonzero(~has)[0]
+    return (np.concatenate([column, rest.astype(column.dtype)]),
+            np.concatenate([pairs, np.full((len(rest), pairs.shape[1]), MISSING, pairs.dtype)]))
 
 
 def focal_loss(logits, targets, weights, alpha=0.25, gamma=2.0):

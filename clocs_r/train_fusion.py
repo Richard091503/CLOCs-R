@@ -15,24 +15,35 @@ from clocs_r import aimotive, cache_cells, fusion, metrics, radar_features, rang
 FAR = (50, 200)  # the 50-100 m and 100-200 m bins scored together, for the selection metric of Section II-C
 
 
-def frame_cells(item, radar, names_idx, device, nocam=False):
-    """Compose the (P, 4+m) input of one frame: base cells plus the candidate's radar features in each cell."""
+def frame_cells(item, radar, names_idx, device, nocam=False, extra=None, pairing=None):
+    """Compose the (P, 4+m+e) input of one frame: base cells plus the candidate's radar features in each cell.
+
+    extra: optional (n, e) per-candidate channels appended after the radar ones (Phase 3: visibility.FEATURES).
+    pairing: optional (min_iou, s2d_floor) for fusion.filter_pairs (Phase 3: I1, I2, K40).
+    """
     if nocam:
         column = np.arange(len(item["scores"]))
         pairs = np.full((len(column), 2), fusion.MISSING, dtype=np.float32)
     else:
         column, pairs = item["column"], item["pairs"]
-    cells = np.concatenate([pairs.astype(np.float32), item["scores"][column, None], item["dist"][column, None]], 1)
+        if pairing is not None:
+            column, pairs = fusion.filter_pairs(column, pairs, len(item["scores"]), *pairing)
+    pairs = pairs.astype(np.float32)  # [IoU, 2D score], or with token RC [IoU, 2D score, affinity, radar score]
+    cells = np.concatenate([pairs[:, :2], item["scores"][column, None], item["dist"][column, None], pairs[:, 2:]], 1)
     x = torch.from_numpy(cells).to(device)
     col = torch.from_numpy(np.asarray(column, dtype=np.int64)).to(device)
     if names_idx:
         x = torch.cat([x, torch.from_numpy(np.asarray(radar[:, names_idx], dtype=np.float32)).to(device)[col]], 1)
+    if extra is not None:
+        x = torch.cat([x, torch.from_numpy(np.asarray(extra, dtype=np.float32)).to(device)[col]], 1)
     return x, col
 
 
 @torch.no_grad()
-def predict(net, base, radar, names_idx, device, nocam=False, nms_thresh=0.1, score_fn=None):
-    """Yields (item, kept boxes, scores) after fused scoring (or score_fn) and NMS, ready for metrics.evaluate."""
+def predict(net, base, radar, names_idx, device, nocam=False, nms_thresh=0.1, score_fn=None, extra=None, pairing=None):
+    """Yields (item, kept boxes, scores) after fused scoring (or score_fn) and NMS, ready for metrics.evaluate.
+
+    extra, pairing: optional per-frame lists for frame_cells."""
     net_was_training = net.training if net is not None else False
     if net is not None:
         net.eval()
@@ -40,7 +51,8 @@ def predict(net, base, radar, names_idx, device, nocam=False, nms_thresh=0.1, sc
         if net is None:
             scores = item["scores"]
         else:
-            x, col = frame_cells(item, radar[i], names_idx, device, nocam)
+            x, col = frame_cells(item, radar[i], names_idx, device, nocam, extra[i] if extra is not None else None,
+                                 pairing[i] if pairing is not None else None)
             scores = torch.sigmoid(net(x, col, len(item["scores"]))).cpu().numpy()
         mask = item["keep_eval"]
         boxes, s = item["boxes"][mask], scores[mask]
@@ -61,21 +73,32 @@ def condition_groups(records, odd=lambda r: r[3], seq=lambda r: r[4]):
     return {name: rows for name, rows in out.items() if rows}
 
 
-def evaluate(net, base, radar, names_idx, device, nocam=False):
+def evaluate(net, base, radar, names_idx, device, nocam=False, extra=None, pairing=None):
     """Metrics by distance bin (with beyond 50 m as one more bin), overall and for each group of driving conditions."""
-    records = [(it["gt"], b, s, it["odd"], it["seq"]) for it, b, s in predict(net, base, radar, names_idx, device, nocam)]
+    records = [(it["gt"], b, s, it["odd"], it["seq"])
+               for it, b, s in predict(net, base, radar, names_idx, device, nocam, extra=extra, pairing=pairing)]
     return {name: metrics.evaluate([r[:3] for r in rows], bins=aimotive.DIST_BINS + [FAR])
             for name, rows in condition_groups(records).items()}
 
 
-def fit(train, train_radar, names_idx, epochs, seed, device, label="", net_kwargs=None, far_weight=1.0):
+def fit(train, train_radar, names_idx, epochs, seed, device, label="", net_kwargs=None, far_weight=1.0,
+        extra=None, pairing=None, cam_dropout=0.0, frame_weights=None, model=None, far_cam_dropout=None):
     """Train a fusion network on cached frames. Returns the network and its loss log.
 
     far_weight: weight of candidates beyond 60 m in the loss, ramping up from 40 m (range_weight.py); 1 leaves it unweighted.
+    Phase 3 (all off by default, which leaves training exactly as before):
+    extra, pairing: per-frame lists for frame_cells. cam_dropout: the fraction of training steps whose frame has all
+    2D candidates removed, drawn from a separate random stream so the frame order is unchanged.
+    frame_weights: per-frame sampling weights; each epoch then draws len(train) frames with replacement.
+    model: a network to train in place of FusionNet (Phase 4: fusion.GatedFusion), built after the seed is set.
+    far_cam_dropout: (normalized distance, p) for token DF (Phase 7 LCR-D): at each step, each candidate beyond the
+    distance loses its camera cells with probability p (fusion.drop_far_camera), from the same separate random stream.
     """
     torch.manual_seed(seed)
     rng = np.random.RandomState(seed)
-    net = fusion.FusionNet(len(names_idx), **(net_kwargs or {})).to(device)
+    drop_rng = np.random.RandomState(seed + 10_000)
+    n_extra = extra[0].shape[1] if extra is not None else 0
+    net = (model() if model is not None else fusion.FusionNet(len(names_idx) + n_extra, **(net_kwargs or {}))).to(device)
     optim = torch.optim.AdamW(net.parameters(), lr=3e-4, weight_decay=0.01)
     steps = epochs * len(train)
     sched = torch.optim.lr_scheduler.OneCycleLR(optim, max_lr=3e-3, total_steps=steps, pct_start=0.4, div_factor=10,
@@ -83,9 +106,19 @@ def fit(train, train_radar, names_idx, epochs, seed, device, label="", net_kwarg
     log, t0, step, running = [], time.time(), 0, 0.0
     net.train()
     for epoch in range(epochs):
-        for i in rng.permutation(len(train)):
+        if frame_weights is None:
+            order = rng.permutation(len(train))
+        else:
+            order = rng.choice(len(train), len(train), p=np.asarray(frame_weights, np.float64) / np.sum(frame_weights))
+        for i in order:
             item = train[i]
-            x, col = frame_cells(item, train_radar[i], names_idx, device)
+            nocam = cam_dropout > 0 and drop_rng.rand() < cam_dropout
+            if far_cam_dropout is not None:
+                column, pairs = fusion.drop_far_camera(item["column"], item["pairs"], item["dist"] > far_cam_dropout[0],
+                                                       far_cam_dropout[1], drop_rng)
+                item = dict(item, column=column, pairs=pairs)
+            x, col = frame_cells(item, train_radar[i], names_idx, device, nocam,
+                                 extra[i] if extra is not None else None, pairing[i] if pairing is not None else None)
             logits = net(x, col, len(item["scores"]))
             tgt = torch.from_numpy(item["target"]).to(device)
             w = item["weight"]
