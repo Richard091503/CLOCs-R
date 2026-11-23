@@ -1,0 +1,32 @@
+{
+ "part": "lcr",
+ "steps": {
+  "LCR cells: camera pairs with K40, radar pairs, reserved cells (CPU)": {
+   "n": 200,
+   "median_ms": 8.418917481321841,
+   "p90_ms": 10.966299462597817,
+   "mean_ms": 7.863437755731866
+  },
+  "LCR fusion network: cells, max per candidate, residual, sigmoid (GPU)": {
+   "n": 200,
+   "median_ms": 8.680065453518182,
+   "p90_ms": 9.56819438142702,
+   "mean_ms": 8.661853900412098
+  },
+  "BEV NMS of the fused candidates, IoU 0.1, at most 100 (CPU)": {
+   "n": 200,
+   "median_ms": 32.49934402992949,
+   "p90_ms": 37.51422739587724,
+   "mean_ms": 32.48221374116838
+  }
+ },
+ "frames": {
+  "warmup": 20,
+  "timed": 200,
+  "split": "val",
+  "first": "20210401-074452-00.01.00-00.01.15@Jarvis|10485"
+ },
+ "model_parameters": 2179,
+ "cells_checked_equal_to_cache": 220,
+ "torch_threads": 8
+}

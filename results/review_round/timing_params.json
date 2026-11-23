@@ -1,0 +1,12 @@
+{
+ "part": "params",
+ "steps": {},
+ "state_dict_numel": {
+  "second": 5305839,
+  "d2": 4821097,
+  "cascade": 69205014,
+  "clutter MLP": 5057,
+  "LCR fusion": 2179
+ },
+ "torch_threads": 8
+}

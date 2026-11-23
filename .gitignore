@@ -124,3 +124,6 @@ runs/
 
 # Detector weights trained on aiMotive; too large for git, published as a GitHub Release instead
 pretrained/
+
+# review-round: runs/ is a symlink to the master checkout's runs folder
+/runs

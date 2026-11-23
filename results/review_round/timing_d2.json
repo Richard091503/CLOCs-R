@@ -1,0 +1,31 @@
+{
+ "part": "d2",
+ "steps": {
+  "d2 input (CPU)": {
+   "n": 200,
+   "median_ms": 21.471895975992084,
+   "p90_ms": 26.157570129726082,
+   "mean_ms": 22.058504732558504
+  },
+  "d2 network (GPU)": {
+   "n": 200,
+   "median_ms": 4.464962927158922,
+   "p90_ms": 4.842879623174667,
+   "mean_ms": 4.56282340164762
+  },
+  "d2 output filter: score >= 0.01, BEV NMS (CPU)": {
+   "n": 200,
+   "median_ms": 43.13776403432712,
+   "p90_ms": 58.53574489010498,
+   "mean_ms": 45.15018174832221
+  }
+ },
+ "frames": {
+  "warmup": 20,
+  "timed": 200,
+  "split": "val",
+  "first": "20210401-074452-00.01.00-00.01.15@Jarvis|10485"
+ },
+ "model_parameters": 4815060,
+ "torch_threads": 8
+}

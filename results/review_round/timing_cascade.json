@@ -1,0 +1,23 @@
+{
+ "part": "cascade",
+ "steps": {
+  "cascade R-CNN at 1.5x (image read and resize on CPU, network on GPU)": {
+   "n": 200,
+   "median_ms": 110.90617597801611,
+   "p90_ms": 113.91890705563128,
+   "mean_ms": 110.98319781769533
+  }
+ },
+ "frames": {
+  "warmup": 20,
+  "timed": 200,
+  "split": "val",
+  "first": "20210401-074452-00.01.00-00.01.15@Jarvis|10485"
+ },
+ "model_parameters": 69151841,
+ "img_scale": [
+  1920,
+  1056
+ ],
+ "torch_threads": 8
+}

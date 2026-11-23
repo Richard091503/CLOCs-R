@@ -177,6 +177,9 @@ Each entry gives the structure, where it is on the `thesis` branch, and what it 
   - L0: 0.4282 / 0.2729;
   - LRf: 0.4233 / 0.2731;
   - LRd: 0.4415 / 0.2858.
+- **Stored results:** `results/lcr/data/experts_nc.json` (`select`) and `val_experts_nc.json` (val) hold the per-seed
+  L0 and LRf metrics (seeds 1–6) behind these numbers. They are copied unchanged from thesis
+  `results/next_round/phase7/experts.json` and `val_experts.json` (review round, 2026-11-23).
 - **Bootstrap:** LRd − L0 is +0.0133 [+0.0049, +0.0228] at 50–200 m on val. Radar through D2's boxes helps; radar as
   point features does not.
 
