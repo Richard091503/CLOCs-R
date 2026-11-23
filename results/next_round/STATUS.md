@@ -1,24 +1,34 @@
 # Where the next round stands (handoff note; update it whenever the state changes)
 
-**Last updated: 2026-11-22, 05:00 UTC.**
+**Last updated: 2026-11-23, 16:00 UTC** (disk cleanup; the sparse version is on branch `sparse`, `results/sparse/STATUS.md`).
 
 **Branches (2026-11-22, `DECISIONS.md` item 15):**
 - `master` is the LCR class-project version: `clocs_r/run_lcr.sh`, `results/lcr/` and `docs/MODELS.md`.
 - `thesis` is this full record.
 - The sparse LiDAR + radar version (`V2_PLAN.md`) is next, on its own branch from `thesis`.
 
-**Run outputs on the VM:** about 13 GB in the `master` checkout's `runs/`. `runs/lcr/` is links into `runs/next_round/`.
-Candidates for freeing disk, none of them needed by LCR (nothing has been deleted):
+**Run outputs on the VM:** the `master` checkout's `runs/` (shared by every branch). `runs/lcr/` is links into
+`runs/next_round/`.
 
-| Path | Size | What it is |
-|---|---|---|
-| `runs/next_round/phase7/rd_teacher`, `rd_student`, `rd_student.init.pth`, `d3_dets` | about 0.66 GB | RadarDistill (D3) |
-| `runs/next_round/phase6/radar_pp`, `radar_dets` | about 0.17 GB | D1 |
-| `runs/cascade`, `runs/second` | about 0.35 GB | detectors of the earlier full-dataset work (pre-next-round splits) |
-| `runs/next_round/phase1/det/fold0`–`fold2` | about 1.0 GB | the cross-fitting detectors (SECOND and Cascade R-CNN per fold); needed to test the item 12 hypothesis |
+**Disk cleanup, 2026-11-23** (user's request: free disk, with every result kept and no model needing retraining).
+Free disk went from 6.4 GB to 17 GB. Every number of every model stays in git (this branch's `results/`), and every
+trained network is still on disk.
 
-The 8 GB `runs/next_round/phase1/cells_in` (LCR's cells) can be rebuilt in minutes from the candidates
-(`cache_cells`). It is needed by every LCR re-run and by the sparse version, so it is kept.
+| What | Freed | What was done | How to get it back |
+|---|---|---|---|
+| Base CLOCs cells: `phase1/cells_in/{fit,select,val}_base.pkl` | 7.2 GB | Deleted. A test rebuild of `select` was byte-identical to the stored file and took 29 s. | `python -m clocs_r.cache_cells --split select,val,fit --no_radar --out runs/next_round/phase1/cells_in --cand3d runs/next_round/phase1/cand_in/3d --cand2d runs/next_round/phase1/cand_in/2d`, about 5 min. On `master`, `run_lcr.sh` rebuilds them by itself. |
+| Optimizer state in 9 finished OpenPCDet checkpoints: SECOND (`fit`, fold 0–2, the earlier `runs/second`), D1, D2, and D3's teacher and student | 0.60 GB | Removed. The weights were checked bit-identical, and each file now carries a `note` key. | Not needed: export and scoring load only `model_state`. Training can no longer resume from these files; a rerun of training needs a fresh output folder. |
+| D1's and D3's exported boxes: `phase6/radar_dets`, `phase7/d3_dets` | 0.21 GB | Deleted (results in `phase6/radar_detector.json`, `phase6b/d1_select.json`, `phase7/radar_detector_d3.json`). | Re-export from the kept weights with the export lines of `phase6_run.sh` (`export_3d ... --nms`) and `phase7_run.sh` (`radardistill_aimotive --stage export`). |
+| Not project data | 2.5 GB | Deleted three old Claude Code VS Code extension versions (2.1.327–2.1.329), VS Code's cached extension downloads, the installed VS Code `.deb` in `~/Downloads`, Firefox's cache, and conda's unused package cache. | Not needed. |
+
+**Kept on purpose:**
+- every final detector network, including the Cascade R-CNNs (`fit`, fold 0–2, the earlier `runs/cascade`; weights
+  only already);
+- the candidates (`phase1/cand_in`, 1.7 GB), from which the cells are rebuilt and SECOND is scored;
+- the cross-fitting detectors (`det/fold0`–`fold2`), needed to test the item 12 hypothesis;
+- D2's boxes (`phase7/d2_dets`), used by LCR;
+- the smaller radar, visibility and pairing caches in `cells_in` (1.3 GB);
+- `~/.cache/torch`, the COCO and ImageNet weights that Cascade R-CNN training starts from.
 
 **Main model of the CLOCs version: LCR** (`R0+T2+K40+RC`), chosen by the user over the rule's B (`DECISIONS.md` item 13).
 - Val is scored: 0.4271 at 50–200 m and 0.2779 at 100–200 m. Both are below SECOND alone (0.4455 and 0.2841).
