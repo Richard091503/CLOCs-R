@@ -1,4 +1,5 @@
-"""CLOCs-R fusion network and pair-tensor construction (Section II-D, Eqs. 3-4)."""
+"""The CLOCs fusion network and its pair cells (CLOCs, Pang et al. 2020): FusionNet, the camera pair filter and the
+training-time camera dropout of LCR-D."""
 import numpy as np
 import torch
 from torch import nn
@@ -84,6 +85,34 @@ def build_cells(boxes2d, scores2d, proj2d, scores3d, dist, radar):
     if m:
         cells[:, 4:] = radar[column]
     return cells, column
+
+
+def filter_pairs(column, pairs, n, min_iou=0.0, s2d_floor=MISSING):
+    """Keep only the pair cells with IoU > min_iou and 2D score >= s2d_floor (K40 sets the floor).
+
+    column, pairs: a frame's cached cells (candidate index; IoU and 2D score). Candidates left with no pair get one
+    reserved no-camera row, as in build_cells. With the defaults every cached pair is kept, in the same order.
+    """
+    keep = (pairs[:, 0] > min_iou) & (pairs[:, 0] != MISSING) & (pairs[:, 1] >= np.float16(s2d_floor))
+    matched = np.zeros(n, bool)
+    matched[column[keep]] = True
+    rest = np.nonzero(~matched)[0]
+    return (np.concatenate([column[keep], rest.astype(column.dtype)]),
+            np.concatenate([pairs[keep], np.full((len(rest), 2), MISSING, pairs.dtype)]))
+
+
+def drop_far_camera(column, pairs, far, p, rng):
+    """Token DF (LCR-D), training only: each candidate with far[j] loses its camera cells with
+    probability p; its radar-detector cells stay. Camera cells are the rows with an IoU (column 0 not MISSING), as token RC
+    lays them out. A candidate left with no cell gets the reserved all-MISSING cell. The inputs are left unchanged."""
+    hide = np.asarray(far, bool) & (rng.rand(len(far)) < p)
+    keep = ~((pairs[:, 0] != MISSING) & hide[column])
+    column, pairs = column[keep], pairs[keep]
+    has = np.zeros(len(far), bool)
+    has[column] = True
+    rest = np.nonzero(~has)[0]
+    return (np.concatenate([column, rest.astype(column.dtype)]),
+            np.concatenate([pairs, np.full((len(rest), pairs.shape[1]), MISSING, pairs.dtype)]))
 
 
 def focal_loss(logits, targets, weights, alpha=0.25, gamma=2.0):

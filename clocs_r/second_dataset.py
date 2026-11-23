@@ -15,7 +15,7 @@ def points_in_box(points, box):
 class AiMotiveDataset(DatasetTemplate):
     def __init__(self, dataset_cfg, class_names, training=True, root_path=None, logger=None):
         super().__init__(dataset_cfg, class_names, training, root_path, logger)
-        self.split = "train" if training else dataset_cfg.get("EVAL_SPLIT", "val")
+        self.split = dataset_cfg.get("TRAIN_SPLIT", "train") if training else dataset_cfg.get("EVAL_SPLIT", "val")
         self.items = splits.frames(self.split)
         if logger:
             logger.info(f"aiMotive {self.split}: {len(self.items)} frames")

@@ -1,0 +1,16 @@
+{
+ "50-200": {
+  "lcr": 0.581652105014241,
+  "lcr_sd": 0.0022233701583658227,
+  "b": 0.5932779450148623,
+  "passes": false
+ },
+ "100-200": {
+  "lcr": 0.41251593337520553,
+  "lcr_sd": 0.004287352486874007,
+  "b": 0.42613178992319073,
+  "passes": false
+ },
+ "final": "B(R0+T2+RP)",
+ "rule": "LCR is the final model if its select mean is not below B's by more than LCR's seed SD at 50-200 and 100-200 m"
+}

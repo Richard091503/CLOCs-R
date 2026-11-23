@@ -1,252 +1,102 @@
-## CLOCs-R on the full aiMotive dataset (all conditions, range-focused)
+# CLOCs-R: one CLOCs network over LiDAR, camera and radar detectors (LCR)
 
-CLOCs (camera-LiDAR) and CLOCs-R (camera-LiDAR-radar) trained and compared on every annotated frame of aiMotive, including night and rain, with training focused on cars beyond 50 m.
+**Question:** does radar help a LiDAR detector find cars beyond 50 m?
 
-- [**Results and analysis**](results/full_dataset/README.md): final CLOCs-R (R2+T2) and CLOCs (R0+T2); how much radar adds, by driving condition and distance.
-- [**What was done**](results/full_dataset/METHODS.md): environment, data, code changes, pipeline.
-- [**The dataset**](results/full_dataset/DATASET.md): where the vehicles are, and what each sensor sees of those beyond 50 m.
-- [**Ablation**](results/full_dataset/ablation/README.md): gate, feature sets and fusion changes, which set the final configurations ([plan](results/full_dataset/ablation/PLAN.md)).
-- [**Example frames**](results/full_dataset/EXAMPLES.md): successes and failures, with camera, LiDAR and radar views.
-- [**Protocol**](results/full_dataset/PLAN.md): written before any result was seen, plus a dated addendum.
-- **Loss curves:** `python results/full_dataset/plot_losses.py` → `results/full_dataset/figures/loss_{second,cascade,fusion}.png`.
+**LCR** answers it within CLOCs. CLOCs (Pang et al., IROS 2020) rescores a LiDAR detector's 3D candidates using
+another detector's boxes. LCR gives one CLOCs network the outputs of three independent detectors at once:
+
+```
+ LiDAR  ──► SECOND ─────────── 3D candidates (boxes, scores) ────────┐
+ camera ──► Cascade R-CNN ──── 2D boxes ──► camera cells   [IoU, s2D, s3D, d, −, −] ──┤
+ radar  ──► D2 (PointPillars) ─ BEV boxes ─► radar cells   [−, −, s3D, d, affinity, s_radar] ──┤
+                                                                     ▼
+                     one CLOCs network: 1×1 convolutions over every cell, max per candidate,
+                     added to SECOND's logit  ──►  new score for each SECOND candidate  ──►  NMS
+```
+
+- **Camera cells.** Each SECOND candidate is paired with every Cascade R-CNN box that overlaps its projection, keeping
+  2D boxes at least as strong as the frame's 40th best (K40).
+- **Radar cells.** It is also paired with every D2 box within 2 m: affinity 1 − d/2 m, plus the radar score.
+- **Absent sensor.** The places of the absent sensor hold −1. A candidate with no pair keeps a reserved cell.
+- **Scope.** The network only rescores SECOND's candidates and never adds boxes.
+- **Size.** 2,179 parameters.
+
+Data: the aiMotive multimodal dataset, all conditions (highway, urban, night, rain). Every detector and every fusion
+network is trained on `fit`; every setting was chosen on `select`; val was scored once per model. The structure of every
+model, the splits and the metric are in [docs/MODELS.md](docs/MODELS.md).
+
+## Results
+
+APCD (centre-distance AP for cars, averaged over 0.5–4 m), mean of 6 seeds. Full tables, conditions, seed-paired
+differences and bootstrap intervals: [results/lcr/REPORT.md](results/lcr/REPORT.md).
+
+| Model | `select` 0–30 | 30–50 | 50–200 | 100–200 | val 0–30 | 30–50 | 50–200 | 100–200 |
+|---|---|---|---|---|---|---|---|---|
+| SECOND alone (L) | 0.9072 | 0.7797 | 0.5639 | 0.4052 | 0.8971 | 0.6206 | 0.4455 | 0.2841 |
+| Camera CLOCs (LC) | 0.9066 | 0.7864 | 0.5807 | 0.4096 | 0.9158 | 0.6304 | 0.4264 | 0.2789 |
+| Radar CLOCs (LRd) | 0.9080 | 0.7759 | 0.5753 | 0.4162 | 0.8913 | 0.6213 | 0.4415 | 0.2858 |
+| **LCR (one network, all three)** | **0.9095** | **0.7812** | **0.5817** | **0.4125** | **0.9132** | **0.6294** | **0.4271** | **0.2779** |
+| LCR-D (far camera dropout in training) | 0.9107 | 0.7790 | 0.5797 | 0.4182 | 0.9087 | 0.6274 | 0.4347 | 0.2801 |
+
+**What the results show** (scene-bootstrap 95% intervals in brackets):
+- **On `select`, LCR is above SECOND alone on average at every range,** most beyond 50 m: +0.018 at 50–200 m, with
+  all 6 seeds higher [−0.004, +0.043]. At 30–50 m, only 2 of 6 seeds are higher.
+- **On val, LCR beats SECOND alone within 50 m:** +0.016 at 0–30 m and +0.009 at 30–50 m (6/6 seeds each).
+- **On val, LCR falls below SECOND alone beyond 50 m:** −0.018 [−0.033, −0.005] at 50–200 m.
+- **LCR's radar cells add almost nothing over camera CLOCs:** LCR − LC is +0.001 [−0.002, +0.005] on `select` and
+  +0.001 [−0.004, +0.005] on val at 50–200 m. The single network learns to lean on the camera.
+- **Radar does carry information beyond 50 m when it has its own network.**
+  - On `select`, LRd − SECOND is +0.0114 [+0.0032, +0.0185] at 50–200 m. On val it is −0.0040 [−0.0146, +0.0050].
+  - A blend of the camera and radar networks (B, 72% / 28%) beats LCR on both splits. LCR − B at 50–200 m is
+    −0.012 [−0.017, −0.004] on `select` and −0.016 [−0.022, −0.009] on val.
+  - LCR is the main model here because it is one network, the simplest form of CLOCs over three detectors. The
+    pre-registered rule had chosen B (see REPORT.md, "Pre-registered rules").
+- **Hiding the camera beyond 50 m in training (LCR-D) moves the network towards radar,** +0.008 on val at 50–200 m
+  (6/6 seeds). Its intervals include 0 on both splits, and it loses 0.002 at 30–50 m on `select`, so its rule kept LCR.
+- **Likely cause, not yet tested:** Cascade R-CNN and D2 are trained on the same `fit` scenes as the fusion network.
+  A camera detector looks far more reliable on the scenes it was trained on. The project's earlier Cascade R-CNN had
+  a 2D recall@0.5 of 92% for 100–200 m cars on its own training scenes, against 23% on val; the `fit`-trained one used
+  here has 35% on `select` and 23% on val. Cross-fitted detector outputs would test this.
+
+## Reproduce
 
 ```bash
-bash clocs_r/install_detectors.sh            # conda env `clocs` (PyTorch 2.0.1 + CUDA 11.8), OpenPCDet, MMDetection
-source env.sh                                # every later command assumes this
-python -m clocs_r.fetch_aimotive --src ~/datasets/aimotive --out ~/datasets/aimotive_clocs --train_stride 1   # extracted dataset -> reduced format
-nohup setsid python -m clocs_r.train_second --out runs/second > runs/second/console.log 2>&1 &              # SECOND, 40 epochs, range-weighted
-nohup setsid python -m clocs_r.cascade_2d train --out runs/cascade --epochs 4 > runs/cascade/console.log 2>&1 &   # Cascade R-CNN, 1.5x images
-nohup setsid bash clocs_r/run_full.sh > runs/run_full.log 2>&1 &   # waits for both, then candidates, fusion selection on holdout, val
-python -m clocs_r.progress                   # status of every job
-python results/full_dataset/per_scene.py && python results/full_dataset/make_report.py   # tables and figure
-# CLOCs-R with radar points + Doppler (R3+T2): 3 more seeds for it, its twin and R2+T2, then the 6-seed report
-python -m clocs_r.tune_fusion --configs R3+T2,R0+T2 --far_weight 2 --seeds 4,5,6 --splits holdout,val --out results/full_dataset/rerun_r3.json --weights runs/fusion_full
-python -m clocs_r.tune_fusion --configs R2+T2 --far_weight 2 --seeds 4,5,6 --splits holdout,val --out results/full_dataset/rerun_r2.json --weights runs/fusion_full
-python results/full_dataset/per_scene.py --models R3+T2,R2+T2,R0+T2 --seeds 1,2,3,4,5,6 --suffix _r3
-python results/full_dataset/make_report.py --model R3+T2 --twin R0+T2 --extra rerun_r3.json,rerun_r2.json --suffix _r3
-python results/full_dataset/dataset_stats.py  # dataset analysis
-python -m clocs_r.ablation_full               # the full ablation; sets the final configurations (about 6 h)
-python results/full_dataset/ablation/make_tables.py
-python results/full_dataset/per_scene.py --models R2+T2,R0+T2 --seeds 1,2,3,4,5,6 --weights runs/ablation/sets_d0.5_k0.02 --suffix _final
-python results/full_dataset/make_report.py --model R2+T2 --twin R0+T2 --extra rerun_r2.json,rerun_r3.json --selected '' --suffix _final
-python results/full_dataset/plot_losses.py    # loss curves
-python results/full_dataset/examples.py       # example frames of successes and failures
+bash clocs_r/install_detectors.sh     # conda env `clocs`: PyTorch 2.0.1 + CUDA 11.8, OpenPCDet (pinned), MMDetection 2.28
+source env.sh                         # every later command assumes this; AIMOTIVE_ROOT defaults to ~/datasets/aimotive_clocs
+python -m clocs_r.fetch_aimotive --src <extracted aiMotive> --out ~/datasets/aimotive_clocs --train_stride 1
+python -m clocs_r.test_core           # quick checks (no GPU needed)
+nohup setsid bash clocs_r/run_lcr.sh >> runs/lcr/run.log 2>&1 &   # detectors, candidates, cells, D2, fusion, val, bootstrap
+python results/lcr/report.py          # results/lcr/REPORT.md from the stored results
 ```
 
-What changed from the daytime-only results further down: all four driving conditions (`clocs_r/splits.py`, `CLOCS_ODDS` restores the old set), every training frame instead of every 2nd, range-weighted losses beyond 50 m in SECOND and fusion (`clocs_r/range_weight.py`), Cascade R-CNN on 1.5x upscaled images, and an environment for current GPUs (the RTX 4090 needs CUDA 11.8 or newer). `python -m clocs_r.train_second --resume` continues an interrupted SECOND run.
+`run_lcr.sh` writes to `runs/lcr/` and `results/lcr/rerun/`, and skips every step whose output exists. Most of the time
+goes to training the three detectors. The trained fusion networks are in `results/lcr/weights/`. With the cached cells
+in `runs/lcr/`, they can be re-scored without training, for example LCR on val:
 
-## CLOCs: Camera-LiDAR Object Candidates Fusion for 3D Object Detection
-
-CLOCs is a novel Camera-LiDAR Object Candidates fusion network. It provides a low-complexity multi-modal fusion framework that improves the performance of single-modality detectors. CLOCs operates on the combined output candidates of any 3D and any 2D detector, and is trained to produce more accurate 3D and 2D detection results.
-
-### CLOCs achieves new best performance in KITTI 3D detection leaderboard (82.28%) through fusing CT3D and Cascade-RCNN, code will be updated soon.
-
-## Environment
-Tested on python3.6/3.7, pytorch 1.1.0/1.7.1, Ubuntu 16.04/18.04.
-
-## Performance on KITTI validation set (3712 training, 3769 validation)
-### CLOCs_SecCas (SECOND+Cascade-RCNN) VS SECOND:
-```
-new 40 recall points
-Car:      Easy@0.7       Moderate@0.7   Hard@0.7
-bbox: AP: 99.33 / 97.87, 93.75 / 92.37, 92.89 / 89.87
-bev:  AP: 96.51 / 95.61, 92.37 / 89.54, 89.41 / 86.96
-3d:   AP: 92.74 / 90.97, 82.90 / 79.94, 77.75 / 77.09
-```
-```
-old 11 recall points
-Car:      Easy@0.7       Moderate@0.7   Hard@0.7
-bev:  AP: 90.52 / 90.36, 89.29 / 88.10, 87.84 / 86.80
-3d:   AP: 89.49 / 88.31, 79.31 / 77.99, 77.36 / 76.52
-```
-
-### Pedestrian and Cyclist Results vs. SECOND:
-Using CLOCs_SecCas (SECOND+Cascade-RCNN) trained on KITTI validation set for Pedestrians/Cyclists
-```
-Pedestrian:    Easy@0.5     Moderate@0.5    Hard@0.5
-bbox:    AP:  74.57/58.26   70.81/54.14    62.51/50.03
-bev:     AP:  68.26/61.97   62.92/56.77    56.51/51.27
-3d:      AP:  62.88/58.01   56.20/51.88    50.10/47.05
-```
-```
-Cyclist:       Easy@0.5     Moderate@0.5    Hard@0.5
-bbox:    AP:  96.17/87.65   80.25/63.11    75.61/60.72
-bev:     AP:  91.42/81.91   71.52/59.36    67.05/55.53
-3d:      AP:  87.57/78.50   67.92/56.74    63.67/52.83
-```
-
-### To Do
- - [ ] Update the codebase to support other 3D detectors (PV-RCNN and CT3D)
- - [x] Support fusion for pedestrian and cyclists on KITTI.
- - [ ] Support easier testing for other 2D and 3D detectors, clean the code, remove unrelated environment setups to make the code easier to use.
-
-
-## Install
-
-The code is developed based on SECOND-1.5, please follow the [SECOND-1.5](https://github.com/traveller59/second.pytorch/tree/v1.5) to setup the environment, the dependences for SECOND-1.5 are needed.
 ```bash
-pip install shapely fire pybind11 tensorboardX protobuf scikit-image numba pillow
-```
-Follow the instructions to install `spconv v1.0` ([commit 8da6f96](https://github.com/traveller59/spconv/tree/8da6f967fb9a054d8870c3515b1b44eca2103634)). Although CLOCs fusion does not need spconv, but SECOND codebase expects it to be correctly configured.
-
-Then adding the CLOCs directory to your PYTHONPATH, you could add the following line (change '/dir/to/your/CLOCs/' according to your CLOCs directory) in your .bashrc under home directory.
-```bash
-export PYTHONPATH=$PYTHONPATH:'/dir/to/your/CLOCs/'
+cp results/lcr/weights/*.pth runs/lcr/fusion/
+python -m clocs_r.tune_fusion --configs R0+T2+K40+RC --splits val --seeds 1,2,3 --from_weights --out results/lcr/rerun/lcr_val.json
 ```
 
-## Pre-trained Models
-Pretrained Models used for inference on Car, Pedestrian, and Cyclist detections can be found [here](https://drive.google.com/drive/folders/16Z9_c8VbZVsvrHczn67ZCeOHYx1x5VDj?usp=sharing).
+## Repository
 
-## Prepare dataset (KITTI)
-Download KITTI dataset and organize the files as follows:
+| Path | Contents |
+|---|---|
+| `clocs_r/` | the LCR pipeline: detectors (`train_second.py`, `cascade_2d.py`, `radar_dataset.py`, `radar_clutter.py`), candidates and cells (`export_3d.py`, `cache_cells.py`, `visibility.py`, `radar_pairs.py`), fusion (`fusion.py`, `train_fusion.py`, `tune_fusion.py`), evaluation (`metrics.py`, `eval_detectors.py`, `radar_candidates.py`, `bootstrap.py`), `run_lcr.sh`, `test_core.py` |
+| `results/lcr/` | `REPORT.md`, `report.py`, the raw results in `data/` and the 24 trained fusion networks in `weights/` |
+| `docs/MODELS.md` | every model's structure: the five here, and those on the `thesis` branch |
 
-```plain
-└── KITTI_DATASET_ROOT
-       ├── training    <-- 7481 train data
-       |   ├── image_2 <-- for visualization
-       |   ├── calib
-       |   ├── label_2
-       |   ├── velodyne
-       |   └── velodyne_reduced <-- empty directory
-       └── testing     <-- 7518 test data
-       |   ├── image_2 <-- for visualization
-       |   ├── calib
-       |   ├── velodyne
-       |   └── velodyne_reduced <-- empty directory
-       └── kitti_dbinfos_train.pkl
-       ├── kitti_infos_train.pkl
-       ├── kitti_infos_test.pkl
-       ├── kitti_infos_val.pkl
-       └── kitti_infos_trainval.pkl
-```
+The **`thesis`** branch keeps the whole project record unchanged:
+- the earlier CLOCs-R with radar point features;
+- the range switch, the visibility and pairing variants, gated fusion, oracle injection and radar-sourced candidates;
+- the radar detectors D1 and D3 (RadarDistill), the selector, the blend and the oracle ceiling;
+- cross-fitting, and the KITTI reproduction of the original CLOCs;
+- every pre-registered rule, decision, log and result.
 
-Next, you could follow the SECOND-1.5 instructions to create kitti infos, reduced point cloud and groundtruth-database infos, or just download these files from [here](https://drive.google.com/drive/folders/16Z9_c8VbZVsvrHczn67ZCeOHYx1x5VDj?usp=sharing) and put them in the correct directories as shown above.
+## Credits
 
-## Fusion of SECOND and Cascade-RCNN
-### Preparation
-CLOCs operates on the combined output of a 3D detector and a 2D detector. For this example, we use SECOND as the 3D detector, Cascade-RCNN as the 2D detector. 
-
-1. For this example, we use detections with sigmoid scores, you could download the Cascade-RCNN detections for the KITTI train and validations set from [here](https://drive.google.com/drive/folders/16Z9_c8VbZVsvrHczn67ZCeOHYx1x5VDj?usp=sharing) file name:'cascade_rcnn_sigmoid_data', or you could run the 2D detector by your self and save the results for the fusion. You could also use your own 2D detector to generate these 2D detections and save them in KITTI format for fusion. 
-
-2. Then download the pretrained SECOND models from [here](https://drive.google.com/drive/folders/16Z9_c8VbZVsvrHczn67ZCeOHYx1x5VDj?usp=sharing) file name: 'second_model.zip', create an empty directory named ```model_dir``` under your CLOCs root directory and unzip the files to ```model_dir```. Your CLOCs directory should look like this:
-```plain
-└── CLOCs
-       ├── d2_detection_data    <-- 2D detection candidates data
-       ├── model_dir       <-- SECOND pretrained weights extracted from 'second_model.zip' 
-       ├── second 
-       ├── torchplus 
-       ├── README.md
-```
-
-3. Then modify the config file carefully:
-```bash
-train_input_reader: {
-  ...
-  database_sampler {
-    database_info_path: "/dir/to/your/kitti_dbinfos_train.pkl"
-    ...
-  }
-  kitti_info_path: "/dir/to/your/kitti_infos_train.pkl"
-  kitti_root_path: "/dir/to/your/KITTI_DATASET_ROOT"
-}
-...
-train_config: {
-  ...
-  detection_2d_path: "/dir/to/2d_detection/data"
-}
-...
-eval_input_reader: {
-  ...
-  kitti_info_path: "/dir/to/your/kitti_infos_val.pkl"
-  kitti_root_path: "/dir/to/your/KITTI_DATASET_ROOT"
-}
-
-```
-### Train
-```bash
-python ./pytorch/train.py train --config_path=./configs/car.fhd.config --model_dir=/dir/to/your_model_dir
-```
-The trained models and related information will be saved in '/dir/to/your_model_dir'
-
-#### Common Errors & Solutions
-1.
-```bash
-File "./pytorch/train.py", line 869, in predict_v2
-    opp_labels = (box_preds[..., -1] > 0) ^ dir_labels.byte()
-RuntimeError: result type Byte can't be cast to the desired output type Bool
-```
-Solution: ```change opp_labels = (box_preds[..., -1] > 0) ^ dir_labels.byte()``` into ```opp_labels = (box_preds[..., -1] > 0) ^ dir_labels.to(torch.bool)```. This is because SECOND-V1.5 is written in older pytorch and you have a newer version.
-
-2. 
-If you have too much NumbaWarning output messages during training/inferece that looks annoying, adding the following code at the beginning of train.py to ignore them:
-```bash
-from numba.core.errors import NumbaDeprecationWarning, NumbaPendingDeprecationWarning,NumbaPerformanceWarning,NumbaWarning
-import warnings
-warnings.simplefilter('ignore', category=NumbaDeprecationWarning)
-warnings.simplefilter('ignore', category=NumbaPendingDeprecationWarning)
-warnings.simplefilter('ignore', category=NumbaPerformanceWarning)
-warnings.simplefilter('ignore', category=NumbaWarning)
-warnings.simplefilter('ignore')
-warnings.filterwarnings('ignore')
-```
-
-### Evaluation
-```bash
-python ./pytorch/train.py evaluate --config_path=./configs/car.fhd.config --model_dir=/dir/to/your/trained_model --measure_time=True --batch_size=1
-```
-For example if you want to test the pretrained model downloaded from [here](https://drive.google.com/drive/folders/16Z9_c8VbZVsvrHczn67ZCeOHYx1x5VDj?usp=sharing) file name: 'CLOCs_SecCas_pretrained.zip', unzip it, then you could run:
-```bash
-python ./pytorch/train.py evaluate --config_path=./configs/car.fhd.config --model_dir=/dir/to/your/CLOCs_SecCas_pretrained --measure_time=True --batch_size=1
-```
-If you want to export KITTI format label files, add ```pickle_result=False``` at the end of the above commamd.
-
-## Pedestrian and Cyclist Detection
-Step 0: **Download Pretrained Models**
-
-If you want to utilize the already trained models, please consult the "Pre-trained Models" section above.
-
-Step 1: **Prepare the Config Files**
-
-Under the `./configs` directory, edit the file `pedestrian.fhd.config` or `cyclist.fhd.config`:
-- Change the value of `detection_2d_path` to your pedestrian 2D detections.
-- Set `steps` and `steps_per_eval` to your desired value (tweak based on training set size, for example, if we have 3712 training examples, setting “steps” equal to 74240 (3712 x 20) means training for 20 epochs. “steps_per_eval” means the step interval for each evaluation, for example, if you set “steps_per_eval” to 3712, it means doing evaluation for each epoch.)
-
-Step 2: **Modifying `train.py`**
-
-Edit `{CLOCs_directory}/second/pytorch/train.py`:
-- Replace the paremeters in every instance of `net = build_inference_net('./configs/car.fhd.config', '../model_dir')` as it appears in the file to point towards the pedestrian/cyclist config. Additionally, ensure that the model directory points to a directory that contins the SECOND-V1.5 pretrained model for pedestrians/cyclists.
-- In the `train` function, around line 258, change the `iou_bev_max` conditional in the assignment of variables `target_for_fusion`, `positive_index`, and `negative_index` to `0.5`, `0.5`, and `0.25` respectfully. The negative index value can be changed in training to alter results, but the final performance difference is not large.
-
-Step 3: **Modifying `voxelnet.py`**
-
-In the file `{CLOCs_directory}/scond/pytorch/models/voxelnet.py`:
-- Around line 393, change `predicted_class_index = np.where(predicted_class=='Car')` to whichever detection you want, aka `'Pedestrian'` or `'Cyclist'`
-- Around line 395, chnage the line `score = np.array([float(x[15]) for x in content])` to `score = np.array([float(x[15]) for x in content])/{score scale}` if your 2D detections use a score scale different that 0-1.0
-- If desired, you can also change the score threshold for 2D detections around line 398. Change the `-100`, which denotes no thresholding, in the line `top_predictions = middle_predictions[np.where(middle_predictions[:,4]>=-100)]` to a decimal score threshold between 0.0 and 1.0.
-
-Step 4: **Modify the Terminal Command**
-
-Run the normal terminal command for training, `python ./pytorch/train.py train --config_path={config file path} --model_dir={model directory}`, pointing towards the config file we edited earlier, and the model directory with the SECOND-V1.5 pretrained model for Pedestrians/Cyclists
-
-## Fusion of other 3D and 2D detectors
-Step 1: Prepare the 2D detection candidates, run your 2D detector and save the results in KITTI format. It is recommended to run inference with NMS score threshold equals to 0 (no score thresholding), but if you don't know how to setup this, it is also fine for CLOCs.
-
-Step 2: Prepare the 3D detection candidates, run your 3D detector and save the results in the format that SECOND could read, including a matrix with shape of N by 7 that contains the N 3D bounding boxes, and a N-element vector for the 3D confidence scores. 7 parameters correspond to the representation of a 3D bounding box. Be careful with the order and coordinate of the 7 parameters, if the parameters are in LiDAR coordinate, the order should be ```x, y, z, width, length, height, heading```; if the parameters are in camera coordinate, the orderr should be ```x, y, z, lenght, height, width, heading```. The details of the transformation functions can be found in file './second/pytorch/core/box_torch_ops.py'.
-
-Step 3: Since the number of detection candidates are different for different 2D/3D detectors, you need to modify the corresponding parameters in the CLOCs code. Then train the CLOCs fusion. For example, there are 70400 (200x176x2) detection candidates in each frame from SECOND with batch size equals to 1. It is a very large number because SECOND is a one-stage detector, for other multi-stage detectors, you could just take the detection candidates before the final NMS function, that would reduce the number of detection candidates to hundreds or thousands.
-
-Step 4: The output of CLOCs are fused confidence scores for all the 3D detection candidates, so you need to replace the old confidence scores (from your 3D detector) with the new fused confidence scores from CLOCs for post processing and evaluation. Then these 3D detection candidates with the corresponding CLOCs fused scores are treated as the input for your 3D detector post processing functions to generate final predictions for evaluation.
-### Citation
-If you find this work useful in your research, please consider citing:
-```
-@article{pang2020clocs,
-  title={CLOCs: Camera-LiDAR Object Candidates Fusion for 3D Object Detection},
-  author={Pang, Su and Morris, Daniel and Radha, Hayder},
-  booktitle={2020 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
-  year={2020}
-  organization={IEEE}
-}
-```
-### Acknowledgement
-Our code are mainly based on [SECOND](https://github.com/traveller59/second.pytorch/tree/v1.5), thanks for their excellent work!
-
+- **CLOCs:** Pang, Morris and Radha, *CLOCs: Camera-LiDAR Object Candidates Fusion for 3D Object Detection*, IROS 2020
+  ([code](https://github.com/pangsu0613/CLOCs)). This repository started as a fork of it (MIT license, `LICENSE`).
+- **Toolboxes:** [OpenPCDet](https://github.com/open-mmlab/OpenPCDet) for SECOND and PointPillars, and
+  [MMDetection](https://github.com/open-mmlab/mmdetection) for Cascade R-CNN.
+- **Data:** the [aiMotive multimodal dataset](https://github.com/aimotive/aimotive_dataset).
