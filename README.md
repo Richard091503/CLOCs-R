@@ -74,6 +74,8 @@ goes to training the three detectors. The trained fusion networks are in `result
 in `runs/lcr/`, they can be re-scored without training, for example LCR on val:
 
 ```bash
+# only if runs/lcr/cells/{fit,select,val}_base.pkl are missing (a cache; rebuilt byte-identical in about 5 min):
+python -m clocs_r.cache_cells --split select,val,fit --no_radar --out runs/lcr/cells --cand3d runs/lcr/cand/3d --cand2d runs/lcr/cand/2d
 cp results/lcr/weights/*.pth runs/lcr/fusion/
 python -m clocs_r.tune_fusion --configs R0+T2+K40+RC --splits val --seeds 1,2,3 --from_weights --out results/lcr/rerun/lcr_val.json
 ```
