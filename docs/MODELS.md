@@ -74,7 +74,7 @@ create candidates.
 - **Inference.** Sigmoid, then BEV NMS at 0.1.
 
 **Configurations are named by tokens** (`clocs_r/tune_fusion.py`).
-- On this branch: R0, T2, K40, RP, RC and DF.
+- On this branch: R0, T2, K40, RP, RC, DF and NC (L0, the sensor-free control; added 2026-11-26 for `results/select_trained/`).
 - On the thesis branch: also R1–R7, T1, T3–T5, H, P, I1, I2, D2, D3, S50, S100, G, C, RD and NC.
 
 ## Models on this branch (executable)

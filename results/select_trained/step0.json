@@ -1,0 +1,7 @@
+{
+ "rule": "retrained fit CLOCs-R (R0+T2+K40+RC) seed 1, val APCD at 50-200 m, equal to the stored value to 3 decimals",
+ "here": 0.42563287539993905,
+ "stored": 0.42563287539993905,
+ "max_abs_diff_any_bin_or_condition": 0.0,
+ "match_3_decimals": true
+}

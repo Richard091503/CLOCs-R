@@ -12,6 +12,8 @@ and adds the second sensor:
           (radar_pairs.combined_cells)                                                      R0+T2+K40+RC     = LCR
     DF    with RC: in training only, camera cells of candidates beyond DF_M hidden with probability DF_P
           (fusion.drop_far_camera)                                                          R0+T2+K40+RC+DF  = LCR-D
+    NC    no second sensor: every candidate has only the reserved cell, in training and test; the same cells and
+          settings as the thesis branch's NC, so its saved L0 networks load here               R0+T2+NC         = L0
 
 Other configurations from the project's development (radar point features, gating, radar candidates, ...) are documented
 in docs/MODELS.md; their code is on the `thesis` branch.
@@ -21,6 +23,7 @@ Usage:
         --cells runs/lcr/cells --cand3d runs/lcr/cand/3d --cand2d runs/lcr/cand/2d --weights runs/lcr/fusion \
         --out results/lcr/lcr_select.json
     add --from_weights to re-score saved networks (e.g. on val) instead of training them.
+    --train_split and --steps choose the training frames and the number of optimizer steps (default: fit, 3 epochs).
 """
 import argparse
 import json
@@ -37,7 +40,7 @@ GATE = (0.5, 0.02)  # radar gate (delta0, kappa) of the cached cells; part of th
 SEEDS = (1, 2, 3)
 DATA = {}
 STAGGER_S = 20  # s between the CUDA start-ups of parallel seeds: simultaneous start-ups twice failed on a shared GPU
-TOKENS = ("R0", "T2", "K40", "RP", "RC", "DF")
+TOKENS = ("R0", "T2", "K40", "RP", "RC", "DF", "NC")
 DF_M, DF_P = 50.0, 0.5
 # Settings saved with every network, and checked when it is loaded. These values are fixed here (the radar point-feature
 # options of earlier configurations are off), so the settings of saved networks still match.
@@ -61,6 +64,9 @@ def parse(config):
     if "DF" in parts:
         assert "RC" in parts, f"{config}: DF hides camera cells beside the radar-detector cells of RC"
         cfg["far_cam_dropout"] = dict(far_m=DF_M, p=DF_P)
+    if "NC" in parts:
+        assert len(parts) == 3, f"{config}: NC removes every pair; nothing to add"
+        cfg["nocam"] = True
     return cfg
 
 
@@ -74,7 +80,10 @@ def make_net(cfg):
 
 
 def pairing(cfg, top2d):
-    """Per-frame (min_iou, s2d_floor) of LC's K40 floor; None otherwise (RC applies the floor when it builds its cells)."""
+    """Per-frame (min_iou, s2d_floor) of LC's K40 floor; None otherwise (RC applies the floor when it builds its cells).
+    NC: an infinite floor keeps no pair, so every candidate gets the reserved cell [-1, -1, s3D, d] alone."""
+    if cfg.get("nocam"):
+        return [(0.0, np.inf)] * len(top2d)
     if cfg.get("p3") and not cfg.get("rc"):
         return [(0.0, t) for t in top2d]
     return None
@@ -107,7 +116,7 @@ def load_net(cfg, name, weights, seed, far_weight, device):
 
 def run_seed(job):
     """In a forked child, so that CUDA is first used here and the parent's cached frames are shared."""
-    name, cfg, seed, epochs, eval_splits, out, far_weight, from_weights = job
+    name, cfg, seed, epochs, eval_splits, out, far_weight, from_weights, steps = job
     time.sleep(STAGGER_S * (seed - 1) % (3 * STAGGER_S))  # start CUDA in the forked children one at a time (see STAGGER_S)
     torch.set_num_threads(1)
     device = torch.device("cuda")
@@ -119,9 +128,10 @@ def run_seed(job):
         dfc = cfg.get("far_cam_dropout")
         net, log = train_fusion.fit(DATA["train"], epochs, seed, device, f"{name} s{seed}", net_kwargs=cfg["net"],
                                     far_weight=far_weight, n_extra=n_extra(cfg), pairing=pairing(cfg, DATA["top2d_train"]),
-                                    far_cam_dropout=(dfc["far_m"] / cache_cells.MAX_RANGE, dfc["p"]) if dfc else None)
+                                    far_cam_dropout=(dfc["far_m"] / cache_cells.MAX_RANGE, dfc["p"]) if dfc else None,
+                                    steps=steps)
         torch.save(dict(model=net.state_dict(), config=name, settings=cfg, gate=GATE, far_weight=far_weight), path)
-        result = dict(seed=seed, final_loss=log[-1]["loss"] if log else None, loss=log)
+        result = dict(seed=seed, final_loss=log[-1]["loss"] if log else None, loss=log, steps=log[-1]["step"] if log else None)
     for split in eval_splits:
         result[split] = train_fusion.evaluate(net, DATA[split], device, pairing(cfg, DATA["top2d_" + split]))
     result["params"] = sum(p.numel() for p in net.parameters())
@@ -143,6 +153,7 @@ def main():
     ap.add_argument("--from_weights", action="store_true", help="evaluate the networks saved in --weights instead of training")
     ap.add_argument("--seeds", default=",".join(map(str, SEEDS)), help="comma-separated training seeds, one process each")
     ap.add_argument("--train_split", default="fit", help="clocs_r.splits name of the fusion training frames")
+    ap.add_argument("--steps", type=int, default=0, help="total optimizer steps (0: --epochs epochs over the training frames)")
     args = ap.parse_args()
     seeds = [int(s) for s in args.seeds.split(",")]
     eval_splits = args.splits.split(",")
@@ -158,13 +169,15 @@ def main():
     for name in names:
         cfg = parse(name)
         with ctx.Pool(len(seeds)) as pool:
-            runs = pool.map(run_seed, [(name, cfg, s, args.epochs, eval_splits, args.weights, args.far_weight, args.from_weights)
-                                       for s in seeds])
+            runs = pool.map(run_seed, [(name, cfg, s, args.epochs, eval_splits, args.weights, args.far_weight, args.from_weights,
+                                        args.steps or None) for s in seeds])
         prev = results.get(name)
         if prev and prev.get("settings") == cfg and prev.get("far_weight") == args.far_weight and prev.get("gate") == list(GATE):
             # another seed group of the same run: keep both, by seed
             runs = sorted({**{r["seed"]: r for r in prev["runs"]}, **{r["seed"]: r for r in runs}}.values(), key=lambda r: r["seed"])
-        results[name] = dict(settings=cfg, far_weight=args.far_weight, gate=list(GATE), nocam=False, runs=runs)
+        results[name] = dict(settings=cfg, far_weight=args.far_weight, gate=list(GATE), nocam=bool(cfg.get("nocam")), runs=runs)
+        if not args.from_weights and (args.train_split != "fit" or args.steps):
+            results[name].update(train_split=args.train_split, steps=args.steps or args.epochs * len(DATA["train"]))
         far = {split: [r[split]["overall"]["50-200"]["APCD"] for r in runs] for split in eval_splits}
         print(name, {k: f"{np.mean(v):.4f} ({[round(x, 4) for x in v]})" for k, v in far.items()}, flush=True)
         with open(out, "w") as f:

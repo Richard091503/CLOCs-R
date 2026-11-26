@@ -69,7 +69,7 @@ def evaluate(net, base, device, pairing=None):
 
 
 def fit(train, epochs, seed, device, label="", net_kwargs=None, far_weight=1.0, n_extra=0, pairing=None,
-        far_cam_dropout=None):
+        far_cam_dropout=None, steps=None):
     """Train a fusion network on cached frames. Returns the network and its loss log.
 
     far_weight: weight of candidates beyond 60 m in the loss, ramping up from 40 m (range_weight.py); 1 leaves it unweighted.
@@ -77,19 +77,24 @@ def fit(train, epochs, seed, device, label="", net_kwargs=None, far_weight=1.0, 
     pairing: per-frame (min_iou, s2d_floor) for frame_cells.
     far_cam_dropout: (normalized distance, p) for token DF (LCR-D): at each step, each candidate beyond the distance loses
     its camera cells with probability p (fusion.drop_far_camera), from a random stream separate from the frame order.
+    steps: total optimizer steps, when given: fresh permutations of the frames, as many as needed, the last one cut off
+    after `steps` (results/select_trained). None trains exactly `epochs` epochs, as before.
     """
     torch.manual_seed(seed)
     rng = np.random.RandomState(seed)
     drop_rng = np.random.RandomState(seed + 10_000)
     net = fusion.FusionNet(n_extra, **(net_kwargs or {})).to(device)
     optim = torch.optim.AdamW(net.parameters(), lr=3e-4, weight_decay=0.01)
-    steps = epochs * len(train)
+    steps = epochs * len(train) if steps is None else int(steps)
+    epochs = -(-steps // len(train))  # unchanged when steps is None
     sched = torch.optim.lr_scheduler.OneCycleLR(optim, max_lr=3e-3, total_steps=steps, pct_start=0.4, div_factor=10,
                                                 final_div_factor=1e4, cycle_momentum=True, base_momentum=0.85, max_momentum=0.95)
     log, t0, step, running = [], time.time(), 0, 0.0
     net.train()
     for epoch in range(epochs):
         for i in rng.permutation(len(train)):
+            if step == steps:
+                break
             item = train[i]
             if far_cam_dropout is not None:
                 column, pairs = fusion.drop_far_camera(item["column"], item["pairs"], item["dist"] > far_cam_dropout[0],
