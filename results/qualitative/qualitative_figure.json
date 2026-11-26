@@ -1,0 +1,27 @@
+{
+ "bev_window_m": 40.0,
+ "picks": [
+  {
+   "event": "radar_rescue",
+   "index": 0,
+   "sequence": "20210728-063719-00.08.00-00.08.15@Yoda",
+   "frame": 7371,
+   "cascade_boxes_drawn": 4
+  },
+  {
+   "event": "camera_suppression",
+   "index": 0,
+   "sequence": "20210728-063719-00.10.00-00.10.15@Yoda",
+   "frame": 9049,
+   "cascade_boxes_drawn": 2
+  },
+  {
+   "event": "no_proposal",
+   "index": 0,
+   "sequence": "20210728-063719-00.09.15-00.09.30@Yoda",
+   "frame": 8483,
+   "cascade_boxes_drawn": 2
+  }
+ ],
+ "nms_2d_for_drawing": 0.5
+}

@@ -1,0 +1,750 @@
+{
+ "rule": "val only. Per event type, the median distance of all its val events; among events whose car's projected 2D box is at least 4 px wide, the one closest to that median (ties: sequence, frame). Alternates: the next 4 by the same distance rule, skipping events within 10 frames of an already listed example in the same sequence.",
+ "radar_rescue": {
+  "events": 16,
+  "eligible": 16,
+  "median_distance_m": 61.80500000000001,
+  "chosen": {
+   "event": "radar_rescue",
+   "split": "val",
+   "sequence": "20210728-063719-00.08.00-00.08.15@Yoda",
+   "frame": 7371,
+   "condition": "urban",
+   "distance_m": 61.84,
+   "scores": {
+    "SECOND": 0.1770315021276474,
+    "LC": 0.1078248843550682,
+    "CLOCs-R": 0.14543648064136505
+   },
+   "winning_cell": "radar",
+   "winning_cell_values": {
+    "affinity": 0.69970703125,
+    "radar_score": 0.462158203125
+   },
+   "lidar_points": 25,
+   "radar_returns": 3,
+   "width_px": 37.18,
+   "d2_score": 0.4620468318462372,
+   "gt_box": [
+    61.8326,
+    -0.9075,
+    1.1247,
+    3.8938,
+    1.8276,
+    1.5427,
+    0.0016
+   ],
+   "second_box": [
+    61.8337,
+    -1.2837,
+    1.426,
+    4.0534,
+    2.1949,
+    1.4976,
+    6.1791
+   ],
+   "d2_box": [
+    61.3887,
+    -1.6866,
+    0.8714,
+    3.9825,
+    2.3635,
+    1.4497,
+    6.2903
+   ],
+   "detected_after_nms": {
+    "SECOND": false,
+    "CLOCs-R": true
+   }
+  },
+  "alternates": [
+   {
+    "event": "radar_rescue",
+    "split": "val",
+    "sequence": "20210728-063719-00.08.00-00.08.15@Yoda",
+    "frame": 7315,
+    "condition": "urban",
+    "distance_m": 60.25,
+    "scores": {
+     "SECOND": 0.12950699031352997,
+     "LC": 0.08176453411579132,
+     "CLOCs-R": 0.14282134175300598
+    },
+    "winning_cell": "radar",
+    "winning_cell_values": {
+     "affinity": 0.85107421875,
+     "radar_score": 0.59521484375
+    },
+    "lidar_points": 10,
+    "radar_returns": 3,
+    "width_px": 37.99,
+    "d2_score": 0.5953488945960999,
+    "gt_box": [
+     60.2355,
+     1.1017,
+     0.591,
+     3.8938,
+     1.8276,
+     1.5427,
+     0.019
+    ],
+    "second_box": [
+     59.5881,
+     1.1635,
+     0.6277,
+     4.3344,
+     1.9071,
+     1.5125,
+     6.2921
+    ],
+    "d2_box": [
+     59.7893,
+     0.9442,
+     0.2831,
+     4.0629,
+     2.1634,
+     1.3581,
+     6.2847
+    ],
+    "detected_after_nms": {
+     "SECOND": false,
+     "CLOCs-R": true
+    }
+   },
+   {
+    "event": "radar_rescue",
+    "split": "val",
+    "sequence": "20210728-063719-00.08.30-00.08.45@Yoda",
+    "frame": 7704,
+    "condition": "urban",
+    "distance_m": 60.16,
+    "scores": {
+     "SECOND": 0.19520151615142822,
+     "LC": 0.11938805878162384,
+     "CLOCs-R": 0.13648894429206848
+    },
+    "winning_cell": "radar",
+    "winning_cell_values": {
+     "affinity": 0.491455078125,
+     "radar_score": 0.3955078125
+    },
+    "lidar_points": 46,
+    "radar_returns": 10,
+    "width_px": 49.97,
+    "d2_score": 0.395586758852005,
+    "gt_box": [
+     60.1458,
+     1.2337,
+     1.1791,
+     5.8456,
+     2.3584,
+     2.1615,
+     0.0061
+    ],
+    "second_box": [
+     60.7134,
+     1.2011,
+     1.7667,
+     6.0372,
+     2.4375,
+     2.1135,
+     3.1018
+    ],
+    "d2_box": [
+     59.7427,
+     0.8969,
+     0.4411,
+     4.0629,
+     2.4555,
+     1.2404,
+     6.3333
+    ],
+    "detected_after_nms": {
+     "SECOND": false,
+     "CLOCs-R": true
+    }
+   },
+   {
+    "event": "radar_rescue",
+    "split": "val",
+    "sequence": "20210728-063719-00.08.00-00.08.15@Yoda",
+    "frame": 7327,
+    "condition": "urban",
+    "distance_m": 60.0,
+    "scores": {
+     "SECOND": 0.17460548877716064,
+     "LC": 0.1053011491894722,
+     "CLOCs-R": 0.15437942743301392
+    },
+    "winning_cell": "radar",
+    "winning_cell_values": {
+     "affinity": 0.7119140625,
+     "radar_score": 0.56298828125
+    },
+    "lidar_points": 11,
+    "radar_returns": 3,
+    "width_px": 38.16,
+    "d2_score": 0.5628097057342529,
+    "gt_box": [
+     59.9952,
+     0.2282,
+     0.7998,
+     3.8938,
+     1.8276,
+     1.5427,
+     0.0058
+    ],
+    "second_box": [
+     59.4571,
+     0.3525,
+     0.7865,
+     4.1379,
+     2.0282,
+     1.5168,
+     6.2793
+    ],
+    "d2_box": [
+     59.5613,
+     0.9188,
+     0.3572,
+     4.019,
+     2.2665,
+     1.3431,
+     6.2599
+    ],
+    "detected_after_nms": {
+     "SECOND": false,
+     "CLOCs-R": true
+    }
+   },
+   {
+    "event": "radar_rescue",
+    "split": "val",
+    "sequence": "20210728-063719-00.09.00-00.09.15@Yoda",
+    "frame": 8275,
+    "condition": "urban",
+    "distance_m": 63.77,
+    "scores": {
+     "SECOND": 0.19252298772335052,
+     "LC": 0.12485318630933762,
+     "CLOCs-R": 0.14341384172439575
+    },
+    "winning_cell": "radar",
+    "winning_cell_values": {
+     "affinity": 0.76416015625,
+     "radar_score": 0.330322265625
+    },
+    "lidar_points": 30,
+    "radar_returns": 5,
+    "width_px": 51.25,
+    "d2_score": 0.33031830191612244,
+    "gt_box": [
+     62.544,
+     12.4509,
+     -0.2343,
+     4.2896,
+     1.9077,
+     1.5468,
+     -3.1344
+    ],
+    "second_box": [
+     62.0051,
+     12.5393,
+     -0.1796,
+     4.44,
+     1.9844,
+     1.4546,
+     3.2284
+    ],
+    "d2_box": [
+     61.5356,
+     12.5836,
+     0.0296,
+     4.4842,
+     2.0445,
+     1.4771,
+     3.1456
+    ],
+    "detected_after_nms": {
+     "SECOND": false,
+     "CLOCs-R": true
+    }
+   }
+  ]
+ },
+ "camera_suppression": {
+  "events": 636,
+  "eligible": 636,
+  "median_distance_m": 89.57,
+  "chosen": {
+   "event": "camera_suppression",
+   "split": "val",
+   "sequence": "20210728-063719-00.10.00-00.10.15@Yoda",
+   "frame": 9049,
+   "condition": "urban",
+   "distance_m": 89.53,
+   "scores": {
+    "SECOND": 0.2289314866065979,
+    "LC": 0.1011500135064125,
+    "CLOCs-R": 0.09355664253234863
+   },
+   "winning_cell": "reserved",
+   "winning_cell_values": {},
+   "lidar_points": 54,
+   "radar_returns": 0,
+   "width_px": 54.44,
+   "d2_score": null,
+   "gt_box": [
+    88.6425,
+    -12.5506,
+    1.2454,
+    3.5764,
+    1.9395,
+    2.0015,
+    0.8904
+   ],
+   "second_box": [
+    88.2742,
+    -12.6219,
+    1.0297,
+    1.3254,
+    1.0348,
+    1.0067,
+    0.9578
+   ],
+   "d2_box": null,
+   "detected_after_nms": {
+    "SECOND": true,
+    "CLOCs-R": false
+   }
+  },
+  "alternates": [
+   {
+    "event": "camera_suppression",
+    "split": "val",
+    "sequence": "20210728-063719-00.09.45-00.10.00@Yoda",
+    "frame": 9014,
+    "condition": "urban",
+    "distance_m": 89.61,
+    "scores": {
+     "SECOND": 0.20305688679218292,
+     "LC": 0.1218096986413002,
+     "CLOCs-R": 0.09970459342002869
+    },
+    "winning_cell": "camera",
+    "winning_cell_values": {
+     "iou": 0.03594970703125,
+     "score_2d": 0.947265625
+    },
+    "lidar_points": 25,
+    "radar_returns": 2,
+    "width_px": 61.45,
+    "d2_score": 0.04061303287744522,
+    "gt_box": [
+     89.3435,
+     6.8724,
+     0.9279,
+     4.4014,
+     1.9176,
+     1.8208,
+     1.7668
+    ],
+    "second_box": [
+     88.6879,
+     7.7082,
+     0.9329,
+     0.9879,
+     0.9536,
+     0.857,
+     6.2649
+    ],
+    "d2_box": [
+     89.8447,
+     5.4068,
+     1.1346,
+     4.9241,
+     2.3798,
+     1.6225,
+     1.2601
+    ],
+    "detected_after_nms": {
+     "SECOND": true,
+     "CLOCs-R": false
+    }
+   },
+   {
+    "event": "camera_suppression",
+    "split": "val",
+    "sequence": "20211006-112855-00.06.08-00.06.23@Sogun",
+    "frame": 5735,
+    "condition": "rain",
+    "distance_m": 89.43,
+    "scores": {
+     "SECOND": 0.34101855754852295,
+     "LC": 0.14118462800979614,
+     "CLOCs-R": 0.1240430474281311
+    },
+    "winning_cell": "reserved",
+    "winning_cell_values": {},
+    "lidar_points": 28,
+    "radar_returns": 2,
+    "width_px": 25.43,
+    "d2_score": 0.025714227929711342,
+    "gt_box": [
+     89.3136,
+     -4.6175,
+     1.4057,
+     4.0614,
+     1.7556,
+     1.5431,
+     -0.0893
+    ],
+    "second_box": [
+     88.5968,
+     -4.5737,
+     0.9559,
+     2.3054,
+     1.6462,
+     0.9485,
+     6.2545
+    ],
+    "d2_box": [
+     90.4716,
+     -3.6486,
+     0.9371,
+     4.1006,
+     2.0542,
+     1.3647,
+     6.2514
+    ],
+    "detected_after_nms": {
+     "SECOND": true,
+     "CLOCs-R": false
+    }
+   },
+   {
+    "event": "camera_suppression",
+    "split": "val",
+    "sequence": "20210728-063719-00.08.15-00.08.30@Yoda",
+    "frame": 7489,
+    "condition": "urban",
+    "distance_m": 89.77,
+    "scores": {
+     "SECOND": 0.23854069411754608,
+     "LC": 0.1387353390455246,
+     "CLOCs-R": 0.1202266588807106
+    },
+    "winning_cell": "camera",
+    "winning_cell_values": {
+     "iou": 0.289794921875,
+     "score_2d": 0.01107025146484375
+    },
+    "lidar_points": 9,
+    "radar_returns": 2,
+    "width_px": 26.01,
+    "d2_score": 0.22380691766738892,
+    "gt_box": [
+     89.7034,
+     -3.4463,
+     0.6428,
+     3.7496,
+     1.8372,
+     1.4629,
+     -0.0104
+    ],
+    "second_box": [
+     88.4852,
+     -3.556,
+     0.661,
+     0.9506,
+     0.9682,
+     0.9132,
+     6.2885
+    ],
+    "d2_box": [
+     89.7396,
+     -4.8076,
+     0.7853,
+     4.0158,
+     2.1708,
+     1.2469,
+     6.2837
+    ],
+    "detected_after_nms": {
+     "SECOND": true,
+     "CLOCs-R": false
+    }
+   },
+   {
+    "event": "camera_suppression",
+    "split": "val",
+    "sequence": "20210728-063719-00.08.15-00.08.30@Yoda",
+    "frame": 7476,
+    "condition": "urban",
+    "distance_m": 89.8,
+    "scores": {
+     "SECOND": 0.22436942160129547,
+     "LC": 0.1344519555568695,
+     "CLOCs-R": 0.12662996351718903
+    },
+    "winning_cell": "camera",
+    "winning_cell_values": {
+     "iou": 0.3876953125,
+     "score_2d": 0.100341796875
+    },
+    "lidar_points": 12,
+    "radar_returns": 3,
+    "width_px": 26.77,
+    "d2_score": 0.2799639105796814,
+    "gt_box": [
+     89.6597,
+     -4.9423,
+     0.742,
+     3.7496,
+     1.8372,
+     1.4629,
+     -0.0119
+    ],
+    "second_box": [
+     88.2999,
+     -5.1242,
+     0.3884,
+     0.9899,
+     0.9948,
+     0.9667,
+     6.2638
+    ],
+    "d2_box": [
+     89.8742,
+     -4.9141,
+     0.4906,
+     3.8932,
+     1.6664,
+     1.0765,
+     6.2805
+    ],
+    "detected_after_nms": {
+     "SECOND": true,
+     "CLOCs-R": false
+    }
+   }
+  ]
+ },
+ "no_proposal": {
+  "events": 163,
+  "eligible": 163,
+  "median_distance_m": 108.8,
+  "chosen": {
+   "event": "no_proposal",
+   "split": "val",
+   "sequence": "20210728-063719-00.09.15-00.09.30@Yoda",
+   "frame": 8483,
+   "condition": "urban",
+   "distance_m": 108.8,
+   "scores": {
+    "SECOND": null,
+    "LC": null,
+    "CLOCs-R": null
+   },
+   "winning_cell": null,
+   "winning_cell_values": null,
+   "lidar_points": 9,
+   "radar_returns": 0,
+   "width_px": 27.44,
+   "d2_score": 0.1520848572254181,
+   "gt_box": [
+    107.2581,
+    18.2304,
+    3.7369,
+    4.5939,
+    1.8469,
+    1.4587,
+    -3.1165
+   ],
+   "second_box": null,
+   "d2_box": [
+    109.0972,
+    17.8026,
+    1.1056,
+    3.9764,
+    2.1202,
+    1.4736,
+    3.275
+   ],
+   "detected_after_nms": {
+    "SECOND": false,
+    "CLOCs-R": false
+   }
+  },
+  "alternates": [
+   {
+    "event": "no_proposal",
+    "split": "val",
+    "sequence": "20210728-063719-00.09.30-00.09.45@Yoda",
+    "frame": 8736,
+    "condition": "urban",
+    "distance_m": 108.84,
+    "scores": {
+     "SECOND": null,
+     "LC": null,
+     "CLOCs-R": null
+    },
+    "winning_cell": null,
+    "winning_cell_values": null,
+    "lidar_points": 14,
+    "radar_returns": 3,
+    "width_px": 23.58,
+    "d2_score": 0.2795175015926361,
+    "gt_box": [
+     108.6463,
+     6.5494,
+     4.3553,
+     4.2717,
+     1.9263,
+     1.4594,
+     0.0073
+    ],
+    "second_box": null,
+    "d2_box": [
+     107.6027,
+     5.4799,
+     1.2629,
+     3.9918,
+     2.271,
+     1.8591,
+     6.3094
+    ],
+    "detected_after_nms": {
+     "SECOND": false,
+     "CLOCs-R": false
+    }
+   },
+   {
+    "event": "no_proposal",
+    "split": "val",
+    "sequence": "20210728-063719-00.09.15-00.09.30@Yoda",
+    "frame": 8451,
+    "condition": "urban",
+    "distance_m": 106.4,
+    "scores": {
+     "SECOND": null,
+     "LC": null,
+     "CLOCs-R": null
+    },
+    "winning_cell": null,
+    "winning_cell_values": null,
+    "lidar_points": 14,
+    "radar_returns": 1,
+    "width_px": 25.42,
+    "d2_score": 0.12404104322195053,
+    "gt_box": [
+     105.2068,
+     15.9134,
+     3.3561,
+     4.6061,
+     1.8416,
+     1.707,
+     -3.0818
+    ],
+    "second_box": null,
+    "d2_box": [
+     103.7015,
+     17.1165,
+     0.7996,
+     4.2874,
+     2.2519,
+     1.6076,
+     3.282
+    ],
+    "detected_after_nms": {
+     "SECOND": false,
+     "CLOCs-R": false
+    }
+   },
+   {
+    "event": "no_proposal",
+    "split": "val",
+    "sequence": "20211006-112855-00.08.15-00.08.30@Sogun",
+    "frame": 7599,
+    "condition": "rain",
+    "distance_m": 106.22,
+    "scores": {
+     "SECOND": null,
+     "LC": null,
+     "CLOCs-R": null
+    },
+    "winning_cell": null,
+    "winning_cell_values": null,
+    "lidar_points": 0,
+    "radar_returns": 0,
+    "width_px": 24.26,
+    "d2_score": 0.1543111503124237,
+    "gt_box": [
+     106.1523,
+     -3.7112,
+     1.0161,
+     4.4955,
+     1.9842,
+     1.5308,
+     0.0027
+    ],
+    "second_box": null,
+    "d2_box": [
+     106.4858,
+     -2.3333,
+     1.4213,
+     4.0336,
+     2.6184,
+     2.0446,
+     6.2382
+    ],
+    "detected_after_nms": {
+     "SECOND": false,
+     "CLOCs-R": false
+    }
+   },
+   {
+    "event": "no_proposal",
+    "split": "val",
+    "sequence": "20210728-063719-00.08.15-00.08.30@Yoda",
+    "frame": 7465,
+    "condition": "urban",
+    "distance_m": 111.81,
+    "scores": {
+     "SECOND": null,
+     "LC": null,
+     "CLOCs-R": null
+    },
+    "winning_cell": null,
+    "winning_cell_values": null,
+    "lidar_points": 0,
+    "radar_returns": 2,
+    "width_px": 23.7,
+    "d2_score": 0.1743123084306717,
+    "gt_box": [
+     111.6957,
+     -5.0101,
+     1.0614,
+     4.3386,
+     2.0587,
+     1.9424,
+     -0.0086
+    ],
+    "second_box": null,
+    "d2_box": [
+     110.9817,
+     -4.247,
+     0.6949,
+     4.0124,
+     1.8969,
+     1.0718,
+     6.3186
+    ],
+    "detected_after_nms": {
+     "SECOND": false,
+     "CLOCs-R": false
+    }
+   }
+  ]
+ }
+}

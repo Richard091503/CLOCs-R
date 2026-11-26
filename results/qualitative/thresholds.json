@@ -1,0 +1,67 @@
+{
+ "rule": "F1-maximizing score threshold for cars at 50-200 m on select; final detections (evaluation mask, BEV NMS 0.1); BEV centre distance <= 2 m, greedy by score, one detection per car; detections and cars binned by their own range. Applied unchanged to val.",
+ "seed": 1,
+ "thresholds": {
+  "SECOND": 0.19682492315769196,
+  "LC": 0.13190503418445587,
+  "CLOCs-R": 0.13574214279651642
+ },
+ "select": {
+  "SECOND": {
+   "threshold": 0.19682492315769196,
+   "F1": 0.6722842177180597,
+   "precision": 0.7445145018915511,
+   "recall": 0.6128295619680298,
+   "tp": 5904,
+   "detections": 7930,
+   "cars": 9634
+  },
+  "LC": {
+   "threshold": 0.13190503418445587,
+   "F1": 0.6598549769281477,
+   "precision": 0.7008168028004668,
+   "recall": 0.623417064563006,
+   "tp": 6006,
+   "detections": 8570,
+   "cars": 9634
+  },
+  "CLOCs-R": {
+   "threshold": 0.13574214279651642,
+   "F1": 0.6615784712799638,
+   "precision": 0.7264713185994537,
+   "recall": 0.6073282125804442,
+   "tp": 5851,
+   "detections": 8054,
+   "cars": 9634
+  }
+ },
+ "val_at_select_threshold": {
+  "SECOND": {
+   "threshold": 0.19682492315769196,
+   "F1": 0.536047497879559,
+   "precision": 0.876803551609323,
+   "recall": 0.38602492059613974,
+   "tp": 6320,
+   "detections": 7208,
+   "cars": 16372
+  },
+  "LC": {
+   "threshold": 0.13190503418445587,
+   "F1": 0.5251588097626212,
+   "precision": 0.8315246161990472,
+   "recall": 0.3837649645736623,
+   "tp": 6283,
+   "detections": 7556,
+   "cars": 16372
+  },
+  "CLOCs-R": {
+   "threshold": 0.13574214279651642,
+   "F1": 0.5107268787968903,
+   "precision": 0.8387051765034185,
+   "recall": 0.36715123381382847,
+   "tp": 6011,
+   "detections": 7167,
+   "cars": 16372
+  }
+ }
+}
