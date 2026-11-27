@@ -24,6 +24,7 @@ Usage:
         --out results/lcr/lcr_select.json
     add --from_weights to re-score saved networks (e.g. on val) instead of training them.
     --train_split and --steps choose the training frames and the number of optimizer steps (default: fit, 3 epochs).
+    --train_scenes keeps only the listed scenes of --train_split (results/fit_sub_control; default: every scene).
 """
 import argparse
 import json
@@ -154,6 +155,8 @@ def main():
     ap.add_argument("--seeds", default=",".join(map(str, SEEDS)), help="comma-separated training seeds, one process each")
     ap.add_argument("--train_split", default="fit", help="clocs_r.splits name of the fusion training frames")
     ap.add_argument("--steps", type=int, default=0, help="total optimizer steps (0: --epochs epochs over the training frames)")
+    ap.add_argument("--train_scenes", default="", help="JSON file whose 'scenes' list keeps only those scenes of --train_split "
+                    "(default: every scene)")
     args = ap.parse_args()
     seeds = [int(s) for s in args.seeds.split(",")]
     eval_splits = args.splits.split(",")
@@ -165,6 +168,13 @@ def main():
     results = json.load(open(out)) if out.exists() else {}
     for split, key in [(s, s) for s in eval_splits] + ([] if args.from_weights else [(args.train_split, "train")]):
         prepare(split, key, args.cells, args.cand3d, args.cand2d, args.radar_dets, next(iter(kinds)))
+    if args.train_scenes and not args.from_weights:
+        keep = set(json.load(open(args.train_scenes))["scenes"])
+        idx = [i for i, it in enumerate(DATA["train"]) if it["seq"] in keep]  # the cached order, as a cache of these scenes
+        assert {DATA["train"][i]["seq"] for i in idx} == keep, f"{args.train_scenes}: scenes missing from {args.train_split}"
+        DATA["train"] = [DATA["train"][i] for i in idx]
+        t = DATA["top2d_train"]
+        DATA["top2d_train"] = t[idx] if isinstance(t, np.ndarray) else [t[i] for i in idx]
     ctx = mp.get_context("fork")
     for name in names:
         cfg = parse(name)
@@ -178,6 +188,8 @@ def main():
         results[name] = dict(settings=cfg, far_weight=args.far_weight, gate=list(GATE), nocam=bool(cfg.get("nocam")), runs=runs)
         if not args.from_weights and (args.train_split != "fit" or args.steps):
             results[name].update(train_split=args.train_split, steps=args.steps or args.epochs * len(DATA["train"]))
+        if args.train_scenes and not args.from_weights:
+            results[name].update(train_scenes=args.train_scenes, train_frames=len(DATA["train"]))
         far = {split: [r[split]["overall"]["50-200"]["APCD"] for r in runs] for split in eval_splits}
         print(name, {k: f"{np.mean(v):.4f} ({[round(x, 4) for x in v]})" for k, v in far.items()}, flush=True)
         with open(out, "w") as f:

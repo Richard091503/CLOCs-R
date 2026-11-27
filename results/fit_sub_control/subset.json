@@ -1,0 +1,209 @@
+{
+ "rule": "fit_sub: whole fit scenes, drawn per driving condition, as many frames as select has in that condition. Seed 0, a fresh RandomState per condition; first prefix closest to select's kept frames.",
+ "seed": 0,
+ "draw": {
+  "highway": {
+   "fit_scenes": 60,
+   "target_frames": 1419,
+   "scenes_drawn": 10,
+   "frames": 1413,
+   "frames_minus_target": -6,
+   "next_scene_frames_minus_target": 135
+  },
+  "urban": {
+   "fit_scenes": 44,
+   "target_frames": 1136,
+   "scenes_drawn": 8,
+   "frames": 1133,
+   "frames_minus_target": -3,
+   "next_scene_frames_minus_target": 139
+  },
+  "night": {
+   "fit_scenes": 21,
+   "target_frames": 569,
+   "scenes_drawn": 4,
+   "frames": 566,
+   "frames_minus_target": -3,
+   "next_scene_frames_minus_target": 138
+  },
+  "rain": {
+   "fit_scenes": 2,
+   "target_frames": 285,
+   "scenes_drawn": 2,
+   "frames": 285,
+   "frames_minus_target": 0,
+   "next_scene_frames_minus_target": null
+  }
+ },
+ "scenes": [
+  "20210401-073402-00.19.45-00.20.00@Jarvis",
+  "20210401-093047-00.20.45-00.21.00@Jarvis",
+  "20210401-093047-02.20.30-02.20.45@Jarvis",
+  "20210512-140820-00.22.45-00.23.00@Yoda",
+  "20210512-140820-00.39.15-00.39.30@Yoda",
+  "20210512-140820-00.59.45-01.00.00@Yoda",
+  "20210512-140820-01.04.30-01.04.45@Yoda",
+  "20210608-094428-00.57.15-00.57.30@Yoda",
+  "20220203-144759-00.40.00-00.40.15@Cali",
+  "20220203-144759-00.53.00-00.53.15@Cali",
+  "20210604-054939-00.09.30-00.09.45@Yoda",
+  "20210629-154241-00.11.15-00.11.30@Yoda",
+  "20210707-153434-00.04.15-00.04.30@Yoda",
+  "20210806-155941-00.19.00-00.19.15@Yoda",
+  "20210806-185601-00.22.15-00.22.30@Yoda",
+  "20210810-160640-00.12.45-00.13.00@Yoda",
+  "20210810-160640-00.18.45-00.19.00@Yoda",
+  "20210810-182213-00.13.45-00.14.00@Yoda",
+  "20210723-222803-00.12.30-00.12.45@Yoda",
+  "20210810-214801-00.21.45-00.22.00@Yoda",
+  "20210810-223037-00.19.30-00.19.45@Yoda",
+  "20210817-210650-00.21.30-00.21.45@Yoda",
+  "20210427-101009-00.57.15-00.57.30@Jarvis",
+  "20210427-101009-00.57.30-00.57.45@Jarvis"
+ ],
+ "recordings": [
+  "20210401-073402@Jarvis",
+  "20210401-093047@Jarvis",
+  "20210427-101009@Jarvis",
+  "20210512-140820@Yoda",
+  "20210604-054939@Yoda",
+  "20210608-094428@Yoda",
+  "20210629-154241@Yoda",
+  "20210707-153434@Yoda",
+  "20210723-222803@Yoda",
+  "20210806-155941@Yoda",
+  "20210806-185601@Yoda",
+  "20210810-160640@Yoda",
+  "20210810-182213@Yoda",
+  "20210810-214801@Yoda",
+  "20210810-223037@Yoda",
+  "20210817-210650@Yoda",
+  "20220203-144759@Cali"
+ ],
+ "fit_sub": {
+  "highway": {
+   "scenes": 10,
+   "frames": 1413,
+   "recordings": 5,
+   "cars_50_100": 1642,
+   "cars_100_200": 402,
+   "cars_50_200": 2044
+  },
+  "urban": {
+   "scenes": 8,
+   "frames": 1133,
+   "recordings": 7,
+   "cars_50_100": 3553,
+   "cars_100_200": 779,
+   "cars_50_200": 4332
+  },
+  "night": {
+   "scenes": 4,
+   "frames": 566,
+   "recordings": 4,
+   "cars_50_100": 570,
+   "cars_100_200": 259,
+   "cars_50_200": 829
+  },
+  "rain": {
+   "scenes": 2,
+   "frames": 285,
+   "recordings": 1,
+   "cars_50_100": 143,
+   "cars_100_200": 0,
+   "cars_50_200": 143
+  },
+  "all": {
+   "scenes": 24,
+   "frames": 3397,
+   "recordings": 17,
+   "cars_50_100": 5908,
+   "cars_100_200": 1440,
+   "cars_50_200": 7348
+  }
+ },
+ "select": {
+  "highway": {
+   "scenes": 10,
+   "frames": 1419,
+   "recordings": 3,
+   "cars_50_100": 1725,
+   "cars_100_200": 778,
+   "cars_50_200": 2503
+  },
+  "urban": {
+   "scenes": 8,
+   "frames": 1136,
+   "recordings": 4,
+   "cars_50_100": 3454,
+   "cars_100_200": 1271,
+   "cars_50_200": 4725
+  },
+  "night": {
+   "scenes": 4,
+   "frames": 569,
+   "recordings": 3,
+   "cars_50_100": 1289,
+   "cars_100_200": 488,
+   "cars_50_200": 1777
+  },
+  "rain": {
+   "scenes": 2,
+   "frames": 285,
+   "recordings": 1,
+   "cars_50_100": 406,
+   "cars_100_200": 223,
+   "cars_50_200": 629
+  },
+  "all": {
+   "scenes": 24,
+   "frames": 3409,
+   "recordings": 11,
+   "cars_50_100": 6874,
+   "cars_100_200": 2760,
+   "cars_50_200": 9634
+  }
+ },
+ "fit": {
+  "highway": {
+   "scenes": 60,
+   "frames": 8495,
+   "recordings": 12,
+   "cars_50_100": 10144,
+   "cars_100_200": 3119,
+   "cars_50_200": 13263
+  },
+  "urban": {
+   "scenes": 44,
+   "frames": 6240,
+   "recordings": 17,
+   "cars_50_100": 19998,
+   "cars_100_200": 5079,
+   "cars_50_200": 25077
+  },
+  "night": {
+   "scenes": 21,
+   "frames": 2973,
+   "recordings": 5,
+   "cars_50_100": 5834,
+   "cars_100_200": 1759,
+   "cars_50_200": 7593
+  },
+  "rain": {
+   "scenes": 2,
+   "frames": 285,
+   "recordings": 1,
+   "cars_50_100": 143,
+   "cars_100_200": 0,
+   "cars_50_200": 143
+  },
+  "all": {
+   "scenes": 127,
+   "frames": 17993,
+   "recordings": 34,
+   "cars_50_100": 36119,
+   "cars_100_200": 9957,
+   "cars_50_200": 46076
+  }
+ }
+}
